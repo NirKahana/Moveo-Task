@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { Howl, Howler } from 'howler';
 import { makeStyles } from '@material-ui/core/styles';
 import { Switch } from '@material-ui/core';
 import LoopRoundedIcon from '@material-ui/icons/LoopRounded';
@@ -9,12 +10,12 @@ import StopRoundedIcon from '@material-ui/icons/StopRounded';
 import BassAudio from "../../loops/BassAudio.mp3"; 
 import BreakbeatsAudio from "../../loops/BreakbeatsAudio.mp3"; 
 import DrumMachineAudio from "../../loops/DrumMachineAudio.mp3"; 
-import DrumsAudio from "../../loops/DrumsAudio.mp3"; 
-import ElectricGuitarAudio from "../../loops/ElectricGuitarAudio.mp3"; 
-import FunkAudio from "../../loops/FunkAudio.mp3"; 
-import GrooveAudio from "../../loops/GrooveAudio.mp3"; 
-import MazePoliticsAudio from "../../loops/MazePoliticsAudio.mp3"; 
-import SynthesizerAudio from "../../loops/SynthesizerAudio.mp3"; 
+// import DrumsAudio from "../../loops/DrumsAudio.mp3"; 
+// import ElectricGuitarAudio from "../../loops/ElectricGuitarAudio.mp3"; 
+// import FunkAudio from "../../loops/FunkAudio.mp3"; 
+// import GrooveAudio from "../../loops/GrooveAudio.mp3"; 
+// import MazePoliticsAudio from "../../loops/MazePoliticsAudio.mp3"; 
+// import SynthesizerAudio from "../../loops/SynthesizerAudio.mp3"; 
 
 // material UI styles
 const useStyles = makeStyles({
@@ -60,64 +61,77 @@ const useStyles = makeStyles({
   }
 });
 
-// Creating A udio instances for all loop files
-const bass = new Audio(BassAudio);
-const breakbeats = new Audio(BreakbeatsAudio);
-const drumMachine = new Audio(DrumMachineAudio);
-const drums = new Audio(DrumsAudio);
-const electricGuitar = new Audio(ElectricGuitarAudio);
-const funk = new Audio(FunkAudio);
-const groove = new Audio(GrooveAudio);
-const mazePolitics = new Audio(MazePoliticsAudio);
-const synthesizer = new Audio(SynthesizerAudio);
+// Creating Audio instances for all loop files
+const bass = new Howl({
+  src: [BassAudio],
+  loop: true,
+});
+const breakbeats = new Howl({
+  src: [BreakbeatsAudio],
+  loop: true
+})
+const drumMachine = new Howl({
+  src: [DrumMachineAudio],
+  loop: true
+});
+
+
 
 export default function Home() {
   const classes = useStyles();
-  const [isOn, setIsOn] = useState(false);
+  
   const [loopIsOn, setLoopIsOn] = useState(true);
-  const [loopsToPlay, setLoopsToPlay] = useState([bass, drumMachine, breakbeats]);
-
-  useEffect(() => {
-    // set the 'loop' attribute to 'true' for all the audio elements
-    bass.loop = true;
-    breakbeats.loop = true;
-    drumMachine.loop = true;
-    drums.loop = true;
-    electricGuitar.loop = true;
-    funk.loop = true;
-    groove.loop = true;
-    mazePolitics.loop = true;
-    synthesizer.loop = true;
-    console.log(drums.src);
-  }, []);
-
-  const addToList = (loop) => {
-    setLoopsToPlay([...loopsToPlay, loop]);
-  }
-  const removeFromList = (loop) => {
-    const copyOfLoopsToPlay = [...loopsToPlay];
-    // copyOfLoopsToPlay.splice(loopIndex, 1)
-    // setLoopsToPlay(newLoopsToPlay);
+  let backgroundLoop;
+  const mainLoop = () => {
+    backgroundLoop = setTimeout(() => {
+        // Do Something Here
+        console.log('loop ended');
+        // Then recall the parent function to
+        // create a recursive loop.
+        if(loopIsOn){
+          mainLoop();
+        }
+    }, 2000);
+    // }, bass.duration);
   }
 
-  const start = () => {
-    loopsToPlay.forEach(loop => loop.play());
-    loopsToPlay.forEach(loop => loop.loop = true);
-  }
 
+  // useEffect(() => {
+  //   bass.on('end', () => {console.log('ended')})
+  // }, []);
+
+
+  const onSwitch = (e, loopId, audioElement) => {
+  //   if(e.target.checked) {
+  //     addToAudiosToPlay(audioElement)
+  //   } else { 
+  //   removeFromAudiosToPlay(loopId);  
+  //   audioElement.loop = false;
+  //   }
+  }
+  
   const loopSwitch = () => {
     if(loopIsOn) {
       setLoopIsOn(false);
-      loopsToPlay.forEach(loop => loop.loop = false);
+      // audioElements.forEach(loop => loop.loop = false);
     } else {
       setLoopIsOn(true);
-      loopsToPlay.forEach(loop => loop.loop = true);
+      // audioElements.forEach(loop => loop.loop = true);
     }
   }
 
-  const stopImmediately  = () => {
-    loopsToPlay.forEach(loop => loop.pause());
-    loopsToPlay.forEach(loop => loop.currentTime = 0);
+  const start = () => {
+    mainLoop();
+    setLoopIsOn(true);
+  }
+
+  const stop  = () => {
+    Howler.stop();
+    setLoopIsOn(false)
+    clearTimeout(backgroundLoop);
+  }
+  const onEnded = () => {
+    console.log('ended');
   }
   return (
     <>
@@ -125,21 +139,21 @@ export default function Home() {
       <div className={classes.cardsContainer}>
         <div className={classes.card}>
           <div>Bass</div>
-          <div className={classes.switch}><Switch /></div>
+          <div className={classes.switch}><Switch color={'primary'} /></div>
         </div>
         <div className={classes.card}>
           <div>Drum Machine</div>
-          <div className={classes.switch}><Switch /></div>
+          <div className={classes.switch}><Switch color={'primary'} /></div>
         </div>
         <div className={classes.card}>
           <div>Break Beats</div>
-          <div className={classes.switch}><Switch /></div>
+          <div className={classes.switch}><Switch color={'primary'} /></div>
         </div>
       </div>
 
       <div className={classes.toolbar}>
         <PlayCircleOutlineIcon  className={classes.icon} onClick={start} fontSize={'large'}/>
-        <StopRoundedIcon  className={classes.icon} onClick={stopImmediately} fontSize={'large'}/>
+        <StopRoundedIcon  className={classes.icon} onClick={stop} fontSize={'large'}/>
         <LoopRoundedIcon  className={classes.icon} onClick={loopSwitch} fontSize={'large'} color={loopIsOn ? 'primary' : 'disabled'}/>
       </div>
     </div>
