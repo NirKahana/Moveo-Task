@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Howl, Howler } from 'howler';
 import { makeStyles } from '@material-ui/core/styles';
-import { Switch } from '@material-ui/core';
-import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
-import StopRoundedIcon from '@material-ui/icons/StopRounded';
-import MicIcon from '@material-ui/icons/Mic';
-import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
 
 // importing all audio files
 import BassAudio from "../loops/BassAudio.mp3"; 
@@ -17,16 +12,17 @@ import FunkAudio from "../loops/FunkAudio.mp3";
 import GrooveAudio from "../loops/GrooveAudio.mp3"; 
 import MazePoliticsAudio from "../loops/MazePoliticsAudio.mp3"; 
 import SynthesizerAudio from "../loops/SynthesizerAudio.mp3"; 
+
+// importing components 
 import Pad from "./Pad";
 import ToolBar from "./ToolBar";
 
-// material UI styles
+// Material UI styles
 const useStyles = makeStyles({
   pageContainer: {
     display: 'flex',
     flexDirection: 'column',  
     height: '100vh',
-    // backgroundColor: '#cde6fe78'
   },
   cardsContainer: {
     display: 'flex',
@@ -36,24 +32,14 @@ const useStyles = makeStyles({
     '&::-webkit-scrollbar': {
       display: 'none'
     }
-    // overflow: 'hidden'
-    // margin: '1em 0'
-  },
-  switch: {
-    margin: '0.5em 0',
-    // marginTop: 'auto'
   },
   toolbarSpaceSaver: {
-    // height: '4em', 
     padding: '2em 0',
     width: '100vw'
-  },
-  button: {
-    margin: '0 1em'
   }
 });
 
-// Creating Audio instances for all loop files
+// Creating Howl instances for all loop files
 const bass = new Howl({
   src: [BassAudio],
   _loop: true,
@@ -90,12 +76,6 @@ const synthesizer = new Howl({
   src: [SynthesizerAudio],
   _loop: true
 });
-const sounds = [bass, breakbeats, drumMachine, drums, electricGuitar, funk, groove, mazePolitics, synthesizer];
-sounds.forEach(sound => {
-  sound.checked = false
-});
-
-// const sounds = [bass, breakbeats, drumMachine, drums, electricGuitar, funk, groove, mazePolitics, synthesizer]; 
 
 export default function Home() {
   const classes = useStyles();
@@ -107,8 +87,8 @@ export default function Home() {
   // An array of all the sounds (loops) that are activated, and waiting to be played in the next loop
   const [waitingList, setWaitingList] = useState([]);
 
-  // These states only indicate whether the pad is activated (not necessarily playing) or not,
-  // and are used for the onSwitch function.
+  // These states only indicate whether the pad is activated (not necessarily playing yet) or not activated.
+  // The states are used for the 'onSwitch' function.
   const [bassIsOn, setBassIsOn] = useState(false);
   const [breakbeatsIsOn, setBreakbeatsIsOn] = useState(false);
   const [drumMachineIsOn, setDrumMachineIsOn] = useState(false);
@@ -122,8 +102,9 @@ export default function Home() {
 
   const [isRecording, setIsRecording] = useState(false);
   const [isStreamimgRecord, setIsStreamingRecord] = useState(false);
-  const [record, setRecord] = useState({});
-  const [record1, setRecord1] = useState({
+  // const [record, setRecord] = useState({});
+
+  const [record, setRecord] = useState({
     initials: [bass],
     commands: [
       [0, 'start'],
@@ -132,15 +113,17 @@ export default function Home() {
       [24000, 'stop']
     ]  
   })
-
-  useEffect(() => {
-    
-  }, []);
   
+  // useEffect: Every time one of the dependencies changes, an event-listener is created,
+  // but only if the 'currently playing' list is not empty. 
+  // The event-listener listens to an 'end' event by the first sound in the 'currently playing' list.
+  // When the sound completes a loop, the 'playAgain' function is called,
+  // which plays again the sounds that were played before and also the sounds on the waiting list. 
   useEffect(() => {
-    if(currentlyPlayingSounds[0]) {
+    if(currentlyPlayingSounds[0]) { 
       currentlyPlayingSounds[0].on('end', playAgain)
     }
+    // clean-up
     return () => {
       if(currentlyPlayingSounds[0]) {
         currentlyPlayingSounds[0].off('end');
@@ -150,7 +133,7 @@ export default function Home() {
   
   // Starts the loop
   const onStart = () => {
-    if(!isPlaying && waitingList[0]) { // Start only if the app is not playing
+    if(!isPlaying && waitingList[0]) { // Starts only if the app is not playing
       playWaitingList();
       setIsPlaying(true);
     }
@@ -158,22 +141,27 @@ export default function Home() {
   
   // Stops the loop
   const onStop  = () => {
-    if(isPlaying) { // Stop only if the app is playing
-      // stop currently playing
+    if(isPlaying) { // Stops only if the app is playing
+      // stops all sounds
       Howler.stop();
-      // move all currently playing sounds that are switched on to the waiting list
+      // move all currently playing sounds to the waiting list
       setWaitingList([...waitingList, ...currentlyPlayingSounds]);
-      // reset currently playing list
+      // reset 'currently playing' list
       setCurrentlyPlayingSounds([]);
       setIsPlaying(false);
     }
   }
   
-  // Turns a sound ON/OFF
+  // onSwitch
+  // description: Turns a sound ON/OFF.
+  // Params:
+  // switchedSound- the sound that has been clicked and needs to be switched
+  // padState- the previous state of the sound's pad (ON/OFF)
+  // setPadState- a setter function that changes 'padState'
   const onSwitch = (switchedSound, padState, setPadState) => {
     // Switch the pad's state (ON/OFF)
     setPadState(!padState);
-    // If the pad state was OFF and has been turned ON ('padState' still refers to the old state!)
+    // If the pad state was OFF and has been turned ON: ('padState' still refers to the old state!)
     if(!padState) {
       // then add this sound to the waiting list
       setWaitingList([...waitingList, switchedSound])  
@@ -244,8 +232,22 @@ export default function Home() {
     setWaitingList([]);
   }
 
-  const recordPlayer = (record) => {
-    
+  const playRecord = () => {
+    if(!isPlaying) {
+      resetPads();
+    }
+  }
+  const resetPads = () => {
+    setWaitingList(previousList => []);
+    setBassIsOn(state => !state)
+    setBreakbeatsIsOn(state => !state)
+    setDrumMachineIsOn(state => !state)
+    setDrumsIsOn(state => !state)
+    setElectricGuitarIsOn(state => !state)
+    setFunkIsOn(state => !state)
+    setGrooveIsOn(state => !state)
+    setMazePoliticsIsOn(state => !state)
+    setSynthesizerIsOn(state => !state)
   }
  
   return (
@@ -258,7 +260,7 @@ export default function Home() {
         <Pad name={'Drum Machine'} sound={drumMachine} padState={drumMachineIsOn} setPadState={setDrumMachineIsOn} onSwitch={onSwitch}/>
         <Pad name={'Electric Guitar'} sound={electricGuitar} padState={electricGuitarIsOn} setPadState={setElectricGuitarIsOn} onSwitch={onSwitch}/>
         <Pad name={'Funk'} sound={funk} padState={funkIsOn} setPadState={setFunkIsOn} onSwitch={onSwitch}/>
-        <Pad name={'Groove'} sound={grooveIsOn} padState={grooveIsOn} setPadState={setGrooveIsOn} onSwitch={onSwitch}/>
+        <Pad name={'Groove'} sound={groove} padState={grooveIsOn} setPadState={setGrooveIsOn} onSwitch={onSwitch}/>
         <Pad name={'Maze Politics'} sound={mazePolitics} padState={mazePoliticsIsOn} setPadState={setMazePoliticsIsOn} onSwitch={onSwitch}/>
         <Pad name={'Synthesizer'} sound={synthesizer} padState={synthesizerIsOn} setPadState={setSynthesizerIsOn} onSwitch={onSwitch}/>
       </div>
