@@ -42,7 +42,11 @@ const useStyles = makeStyles({
     height: '8em',
     width: '8em',
     borderRadius: '50%',
-    margin: '1em'
+    margin: '1em 3em',
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#b0c0f4',
+    },
   },
   switch: {
     margin: '0.5em 0',
@@ -110,24 +114,14 @@ export default function Home() {
   const classes = useStyles();
 
   const [isPlaying, setIsPlaying] = useState(false);
-  // const [loopIsOn, setLoopIsOn] = useState(true);
+  const [isRecording, setIsRecording] = useState(false);
+  const [record, setRecord] = useState({});
   const [currentlyPlayingSounds, setCurrentlyPlayingSounds] = useState([]);
   const [waitingList, setWaitingList] = useState([]);
 
   useEffect(() => {
-    // console.log("bass: ", bass);
-    // console.log("bass._loop: ", bass._loop);
 
-    // bass.on('end', () => {
-    //   console.log('bass loop ended');
-    //   console.log('bass.loop: ', bass._loop);
-    // })
-    
-    // console.log('durations: ', sounds[0]._duration);
-    // console.log('durations: ', [...sounds.map(sound => ({duration: sound._duration, src: sound._src}))]);
   }, []);
-
-  // console.log(sortedArray.map(sound => sound._duration));
 
   useEffect(() => {
     if(currentlyPlayingSounds[0]) {
@@ -145,6 +139,9 @@ export default function Home() {
     if(!isPlaying && waitingList[0]) { // Start only if the app is not playing
       playWaitingList();
       setIsPlaying(true);
+    }
+    if(isRecording) {
+
     }
   }
 
@@ -166,7 +163,7 @@ export default function Home() {
     // If the switch has been turned ON
     if(e.target.checked) {
       // add this sound to the waiting list
-      setWaitingList([...waitingList, sound])  
+      setWaitingList([...waitingList, switchedSound])  
     }
     else { // If the switch has been turned OFF
       // Check if this sound is currently playing
