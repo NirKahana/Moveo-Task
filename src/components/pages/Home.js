@@ -111,7 +111,8 @@ const sounds = [bass, breakbeats, drumMachine, drums, electricGuitar, funk, groo
 // console.log('durations: ', [...sounds.map(sound => sound._duration)]);
 
 sounds.forEach(sound => {
-  sound.loop(true); 
+  // sound.loop(true);
+  console.log(sound.duration());
 });
 
 
@@ -133,7 +134,6 @@ export default function Home() {
     // })
     
     // console.log('durations: ', sounds[0]._duration);
-    // console.log(sounds.map(sound => sound._duration));
     // console.log('durations: ', [...sounds.map(sound => ({duration: sound._duration, src: sound._src}))]);
   }, []);
 
@@ -141,7 +141,7 @@ export default function Home() {
 
   useEffect(() => {
     if(currentlyPlayingSounds[0]) {
-      currentlyPlayingSounds[0].once('end', playWaitingList)
+      currentlyPlayingSounds[0].on('end', playCurrentlyPlaying)
     }
     return () => {
       if(currentlyPlayingSounds[0]) {
@@ -229,14 +229,21 @@ export default function Home() {
     }
   }
   
-  const playWaitingList = () => {
+  const playCurrentlyPlaying = () => {
+    currentlyPlayingSounds.forEach(sound => {
+      sound.play();
+    });
     if(waitingList[0]) {
+      playWaitingList();
+    }
+  }
+  
+  const playWaitingList = () => {
       waitingList.forEach(sound => {
         sound.play();
       });
       moveWaitingListToCurrentlyPlaying();
       setWaitingList([]);
-    }
   }
 
   const moveWaitingListToCurrentlyPlaying = () => {
