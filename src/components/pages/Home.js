@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Howl, Howler } from 'howler';
 import { makeStyles } from '@material-ui/core/styles';
 import { Switch } from '@material-ui/core';
-import LoopRoundedIcon from '@material-ui/icons/LoopRounded';
 import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import StopRoundedIcon from '@material-ui/icons/StopRounded';
 
@@ -38,7 +37,6 @@ const useStyles = makeStyles({
     justifyContent: 'center',
     alignItems: 'center',
     border: '1px solid black',
-    borderRadius: 3,
     boxShadow: '0 3px 5px 2px #aea9a9',
     backgroundColor: '#a8b9f3',
     height: '8em',
@@ -106,15 +104,7 @@ const synthesizer = new Howl({
   src: [SynthesizerAudio],
   _loop: true
 });
-const sounds = [bass, breakbeats, drumMachine, drums, electricGuitar, funk, groove, mazePolitics, synthesizer]; 
-// const sortedArray = sounds.sort((a, b) => a._duration-b._duration);
-// console.log('durations: ', [...sounds.map(sound => sound._duration)]);
-
-sounds.forEach(sound => {
-  // sound.loop(true);
-  console.log(sound.duration());
-});
-
+// const sounds = [bass, breakbeats, drumMachine, drums, electricGuitar, funk, groove, mazePolitics, synthesizer]; 
 
 export default function Home() {
   const classes = useStyles();
@@ -141,7 +131,7 @@ export default function Home() {
 
   useEffect(() => {
     if(currentlyPlayingSounds[0]) {
-      currentlyPlayingSounds[0].on('end', playCurrentlyPlaying)
+      currentlyPlayingSounds[0].on('end', playAgain)
     }
     return () => {
       if(currentlyPlayingSounds[0]) {
@@ -150,37 +140,7 @@ export default function Home() {
     }
   }, [currentlyPlayingSounds, waitingList]);
 
-
-  const onSwitch = (e, switchedSound) => {
-    // If the switch has been turned ON
-    if(e.target.checked) {
-      addToWaitingList(switchedSound);
-    } 
-    else { // If the switch has been turned OFF
-      // Check if this sound is currently playing
-      if(currentlyPlayingSounds.find(sound => sound._sounds[0]._id === switchedSound._sounds[0]._id)) {
-        switchedSound.stop();
-        removeFromCurrentlyPlaying(switchedSound);
-      } else { // If this sound is not currently playing 
-        removeFromWaitingList(switchedSound)
-      }
-    }
-  }
-  
-  // const onLoopButtonClicked = () => {
-  //   if(loopIsOn) {
-  //     console.log('onLoopButtonClicked, loop was true');
-  //     setLoopIsOn(false);
-  //     sounds.forEach(sound => sound(loop) = false);
-  //     // bass.loop(false);
-  //   } else {
-  //     console.log('onLoopButtonClicked, loop was false');
-  //     setLoopIsOn(true);
-  //     // sounds.forEach(sound => sound._loop = true);
-  //     bass.loop(true);
-  //   }
-  // }
-
+  // Starts the loop
   const onStart = () => {
     if(!isPlaying && waitingList[0]) { // Start only if the app is not playing
       playWaitingList();
@@ -188,6 +148,7 @@ export default function Home() {
     }
   }
 
+  // Stops the loop
   const onStop  = () => {
     if(isPlaying) { // Stop only if the app is playing
       // stop currently playing
@@ -199,55 +160,78 @@ export default function Home() {
       setIsPlaying(false);
     }
   }
-  const addToWaitingList = (sound) => {
-    // if(loopIsOn) {
-    //   sound._loop = true;
-    // } else {
-    //   sound._loop = false
-    // }
-    setWaitingList([...waitingList, sound])  
+
+  // Turns a sound ON/OFF
+  const onSwitch = (e, switchedSound) => {
+    // If the switch has been turned ON
+    if(e.target.checked) {
+      // add this sound to the waiting list
+      setWaitingList([...waitingList, sound])  
+    }
+    else { // If the switch has been turned OFF
+      // Check if this sound is currently playing
+      if(currentlyPlayingSounds.find(sound => sound._sounds[0]._id === switchedSound._sounds[0]._id)) {
+        // stop the sound
+        switchedSound.stop();
+        // remove the sound from the 'currently playing' list
+        removeFromCurrentlyPlaying(switchedSound);
+      } else { // If this sound is not currently playing
+        // remove the sound from the waiting list
+        removeFromWaitingList(switchedSound)
+      }
+    }
   }
   
   const removeFromWaitingList = (sound) => {
+    // find this sounds's index within the waiting list
     const soundIndexInWaitingList = waitingList.findIndex(value => (
       value._sounds[0]._id === sound._sounds[0]._id
     ));
+    // create a copy of the waiting list
     const copyOfWaitingList = waitingList.slice();
+    // remove the sound from the copy of the waiting list
     copyOfWaitingList.splice(soundIndexInWaitingList, 1);
+    // set the modified copy as the new waiting list
     setWaitingList(copyOfWaitingList);
   }
 
   const removeFromCurrentlyPlaying = (sound) => {
+    // find the sound's index within the 'currently playing' list
     const soundIndexInCurrentlyPlaying = currentlyPlayingSounds.findIndex(value => (
       value._sounds[0]._id === sound._sounds[0]._id
     ));
+    // create a copy of the 'currently playing' list
     const copyOfCurrentlyPlaying = currentlyPlayingSounds.slice();
+    // remove the sound from the copy
     copyOfCurrentlyPlaying.splice(soundIndexInCurrentlyPlaying, 1);
+    // set the modified copy as the new 'currently playing' list
     setCurrentlyPlayingSounds(copyOfCurrentlyPlaying);
+    // if there are no more sounds playing, set 'isPlaying' to 'false' 
     if(copyOfCurrentlyPlaying.length === 0) {
       setIsPlaying(false)
     }
   }
   
-  const playCurrentlyPlaying = () => {
+  const playAgain = () => {
+    // play again all the currently playing sounds
     currentlyPlayingSounds.forEach(sound => {
       sound.play();
     });
+    // if there are sounds on the waiting list, play them too
     if(waitingList[0]) {
       playWaitingList();
     }
   }
   
   const playWaitingList = () => {
+      // play every sound on the waiting list
       waitingList.forEach(sound => {
         sound.play();
       });
-      moveWaitingListToCurrentlyPlaying();
+      // add the sounds from the waiting list to the 'currently playing' list
+      setCurrentlyPlayingSounds([...currentlyPlayingSounds, ...waitingList]);
+      // empty the waiting list
       setWaitingList([]);
-  }
-
-  const moveWaitingListToCurrentlyPlaying = () => {
-    setCurrentlyPlayingSounds([...currentlyPlayingSounds, ...waitingList]);
   }
 
   return (
@@ -295,7 +279,6 @@ export default function Home() {
       <div className={classes.toolbar}>
         <PlayCircleOutlineIcon  className={isPlaying ? classes.disabledIcon : classes.icon} onClick={onStart} fontSize={'large'} color={isPlaying ? 'disabled' : 'inherit'}/>
         <StopRoundedIcon  className={isPlaying ? classes.icon : classes.disabledIcon} onClick={onStop} fontSize={'large'} color={isPlaying ? 'inherit' : 'disabled'}/>
-        {/* <LoopRoundedIcon  className={classes.icon} onClick={onLoopButtonClicked} fontSize={'large'} color={loopIsOn ? 'primary' : 'disabled'}/> */}
       </div>
     </div>
     </>
