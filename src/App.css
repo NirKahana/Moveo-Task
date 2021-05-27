@@ -9,3 +9,25 @@ body {
 body::-webkit-scrollbar {
   display: none;
 }
+.activatedColor {
+  background-color: #a8b9f3;
+}
+.deactivatedColor {
+  background-color: #ccdafc
+}
+.deactivatedColor:hover {
+  background-color: #a8b9f3cc;
+}
+.pad-size {
+  margin: 0 6vw;
+  height: 8em;
+  width: 8em;
+}
+
+@media only screen and (max-width: 700px) {
+  .pad-size {
+    margin: 0px 4vw;
+    height: 7em;
+    width: 7em;
+  }
+}

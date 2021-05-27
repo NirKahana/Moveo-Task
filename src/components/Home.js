@@ -28,7 +28,7 @@ const useStyles = makeStyles({
   cardsContainer: {
     display: "flex",
     flexDirection: 'column',
-    justifyContent: "space-evenly",
+    justifyContent: "space-between",
     flexWrap: "wrap",
     flexGrow: "1",
     margin: "2em 0",
