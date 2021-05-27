@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
+import ReactLoading from 'react-loading';
 
 // material UI styles
 const useStyles = makeStyles({
@@ -33,10 +34,10 @@ const useStyles = makeStyles({
     width: '8em',
     borderRadius: '50%',
     margin: '1em 3em',
-    cursor: 'pointer',
-    // '&:hover': {
-    //   backgroundColor: '#b4d0ff',
-    // }
+    cursor: 'pointer'
+  },
+  loading: {
+    // position: 'absolute'
   }
 });
 
@@ -49,7 +50,7 @@ export default function Pad({ padState, setPadState, sound, onSwitch, name }) {
       onClick={() => onSwitch(sound, padState, setPadState)}
     >
       <div>{name}</div>
-      <div className={classes.switch}></div>
+      {/* <ReactLoading type={'bubbles'} color={'rgb(114 114 114)'} height={'87'} width={'87'} className={classes.loading}/> */}
     </div>
   );
 }

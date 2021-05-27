@@ -100,19 +100,19 @@ export default function Home() {
   const [synthesizerIsOn, setSynthesizerIsOn] = useState(false);
 
 
-  const [isRecording, setIsRecording] = useState(false);
-  const [isStreamimgRecord, setIsStreamingRecord] = useState(false);
-  // const [record, setRecord] = useState({});
-
+  // const [isRecording, setIsRecording] = useState(false);
+  // const [isStreamimgRecord, setIsStreamingRecord] = useState(false);
+  // the 
   const [record, setRecord] = useState({
-    initials: [bass],
+    initials: ['bass'],
     commands: [
-      [0, 'start'],
-      [1000, 'on', drumMachine],
-      [16000, 'off', drumMachine],
-      [24000, 'stop']
+      // {timeStamp: 3000, string: 'start'},
+      // {timeStamp: 8000, string: 'drum-machine'},
+      // {timeStamp: 5000, string: 'drum-machine'},
+      // {timeStamp: 18000,string: 'stop'}
     ]  
-  })
+  });
+  // const [recordTimer, setRecordTimer] = useState(0);
   
   // useEffect: Every time one of the dependencies changes, an event-listener is created,
   // but only if the 'currently playing' list is not empty. 
@@ -161,10 +161,10 @@ export default function Home() {
   const onSwitch = (switchedSound, padState, setPadState) => {
     // Switch the pad's state (ON/OFF)
     setPadState(!padState);
-    // If the pad state was OFF and has been turned ON: ('padState' still refers to the old state!)
-    if(!padState) {
+    // If the pad state was OFF and has been turned ON:
+    if(!padState) { // *** 'padState' still refers to the pad's state before it was clicked!
       // then add this sound to the waiting list
-      setWaitingList([...waitingList, switchedSound])  
+      setWaitingList([...waitingList, switchedSound]);
     }
     else { // The pad state was ON and has been turned OFF: 
       // Check if this sound is currently playing
@@ -233,26 +233,96 @@ export default function Home() {
   }
 
   const playRecord = () => {
+    // starts only if the machine is not playing
     if(!isPlaying) {
-      resetPads();
+      // reset all pads to OFF and empty the waiting list
+      resetMachine();
+      // activated the initial pads supplied by the record
+      activateInitialSounds(record.initials);
+      // start playing the record
+      runCommands(record.commands);
     }
   }
-  const resetPads = () => {
-    setWaitingList(previousList => []);
-    setBassIsOn(state => !state)
-    setBreakbeatsIsOn(state => !state)
-    setDrumMachineIsOn(state => !state)
-    setDrumsIsOn(state => !state)
-    setElectricGuitarIsOn(state => !state)
-    setFunkIsOn(state => !state)
-    setGrooveIsOn(state => !state)
-    setMazePoliticsIsOn(state => !state)
-    setSynthesizerIsOn(state => !state)
+  const resetMachine = () => {
+
+    setWaitingList(prevState => []);
+    setBassIsOn(prevState => false)
+    setBreakbeatsIsOn(prevState => false)
+    setDrumMachineIsOn(prevState => false)
+    setDrumsIsOn(prevState => false)
+    setElectricGuitarIsOn(prevState => false)
+    setFunkIsOn(prevState => false)
+    setGrooveIsOn(prevState => false)
+    setMazePoliticsIsOn(prevState => false)
+    setSynthesizerIsOn(prevState => false)
+  }
+  const activateInitialSounds = (initialSoundsArray) => {
+    initialSoundsArray.forEach(soundString => runOneCommand(soundString))
+  }
+  // runOneCommand
+  // Description: Takes a string of a command, and runs the corresponding command
+  // for example: the string 'start' will run the 'onStart' function 
+  const runOneCommand = (commandString) => {
+    switch (commandString) {
+      case 'bass':
+        return onSwitch(bass, bassIsOn, setBassIsOn)
+      case 'breakbeats':
+        return onSwitch(breakbeats, breakbeatsIsOn, setBreakbeatsIsOn)
+      case 'drum-machine':
+        return onSwitch(drumMachine, drumMachineIsOn, setDrumMachineIsOn)
+      case 'drums':
+        return onSwitch(drums, drumsIsOn, setDrumsIsOn)
+      case 'electric-guitar':
+        return onSwitch(electricGuitar, electricGuitarIsOn, setElectricGuitarIsOn)
+      case 'funk':
+        return onSwitch(funk, funkIsOn, setFunkIsOn)
+      case 'groove':
+        return onSwitch(groove, grooveIsOn, setGrooveIsOn)
+      case 'maze-politics':
+        return onSwitch(mazePolitics, mazePoliticsIsOn, setMazePoliticsIsOn)
+      case 'synthesizer':
+        return onSwitch(synthesizer, synthesizerIsOn, setSynthesizerIsOn)
+      case 'start':
+        return onStart()
+      case 'stop':
+        return onStop()
+      case 'end':
+        return endStream()
+    }
+  }
+
+  // runCommands
+  // Description: Takes an array of commands and timestamps, and runs
+  // every command at its time, one after another.
+  // const runCommands = (commandsArray) => {
+  //   commandsArray.forEach(command => {
+  //     setTimeout(() => {
+  //       runOneCommand(command.string);
+  //     }, command.timeStamp);
+  //   })
+  // }
+   
+  const runCommands = (commandsArray) => {
+      runSingleCommand(commandsArray, 0)
+  }
+
+  const runSingleCommand = (array, index) => {
+    if(array[index]) {
+      console.log('run single command. index: ', index);
+      setTimeout(() => {
+        runOneCommand(array[index].string);
+        runSingleCommand(array, index+1)
+      }, array[index].timeStamp)
+    }
+  }
+  const endStream = () => {
+
   }
  
   return (
     <>
     <div className={classes.pageContainer}>
+      {/* <h3>Waiting list length: {waitingList.map(sound => <span>{sound._src}</span>)}</h3> */}
       <div className={classes.cardsContainer}>
         <Pad name={'Bass'} sound={bass} padState={bassIsOn} setPadState={setBassIsOn} onSwitch={onSwitch} />
         <Pad name={'Breakbeats'} sound={breakbeats} padState={breakbeatsIsOn} setPadState={setBreakbeatsIsOn} onSwitch={onSwitch} />
@@ -265,7 +335,7 @@ export default function Home() {
         <Pad name={'Synthesizer'} sound={synthesizer} padState={synthesizerIsOn} setPadState={setSynthesizerIsOn} onSwitch={onSwitch}/>
       </div>
       <div className={classes.toolbarSpaceSaver}></div>
-      <ToolBar onStart={onStart} onStop={onStop} isPlaying={isPlaying}/>
+      <ToolBar onStart={onStart} onStop={onStop} isPlaying={isPlaying} playRecord={playRecord} record={record}/>
     </div>
     </>
   )

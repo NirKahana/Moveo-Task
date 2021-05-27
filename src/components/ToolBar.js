@@ -28,12 +28,12 @@ const useStyles = makeStyles({
     margin: '1rem',
   }
 });
-export default function ToolBar({ isPlaying, onStart, onStop }) {
+export default function ToolBar({ isPlaying, onStart, onStop, playRecord, record }) {
   const classes = useStyles();
 
   return (
     <div className={classes.toolbar}>
-        <PlayCircleFilledIcon className={classes.icon} fontSize={'large'}/>
+        <PlayCircleFilledIcon className={classes.icon} fontSize={'large'} onClick={playRecord}/>
         <MicIcon className={classes.icon} fontSize={'large'}/>
         <PlayCircleOutlineIcon  className={isPlaying ? classes.disabledIcon : classes.icon} onClick={onStart} fontSize={'large'} color={isPlaying ? 'disabled' : 'inherit'}/>
         <StopRoundedIcon  className={isPlaying ? classes.icon : classes.disabledIcon} onClick={onStop} fontSize={'large'} color={isPlaying ? 'inherit' : 'disabled'}/>
