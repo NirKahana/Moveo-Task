@@ -42,39 +42,39 @@ const useStyles = makeStyles({
 // Creating Howl instances for all loop files
 const bass = new Howl({
   src: [BassAudio],
-  _loop: true,
+  // _loop: true,
 });
 const breakbeats = new Howl({
   src: [BreakbeatsAudio],
-  _loop: true
+  // _loop: true
 })
 const drumMachine = new Howl({
   src: [DrumMachineAudio],
-  _loop: true
+  // _loop: true
 });
 const drums = new Howl({
   src: [DrumsAudio],
-  _loop: true
+  // _loop: true
 });
 const electricGuitar = new Howl({
   src: [ElectricGuitarAudio],
-  _loop: true
+  // _loop: true
 });
 const funk = new Howl({
   src: [FunkAudio],
-  _loop: true
+  // _loop: true
 });
 const groove = new Howl({
   src: [GrooveAudio],
-  _loop: true
+  // _loop: true
 });
 const mazePolitics = new Howl({
   src: [MazePoliticsAudio],
-  _loop: true
+  // _loop: true
 });
 const synthesizer = new Howl({
   src: [SynthesizerAudio],
-  _loop: true
+  // _loop: true
 });
 
 export default function Home() {
