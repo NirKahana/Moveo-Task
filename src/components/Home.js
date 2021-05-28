@@ -38,7 +38,9 @@ const useStyles = makeStyles({
   cardsContainer: {
     display: "flex",
     flexDirection: 'column',
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
+    // justifyContent: "space-between",
+    alignItems: 'center',
     flexWrap: "wrap",
     flexGrow: "1",
     // margin: "2em 0",
@@ -53,7 +55,7 @@ const useStyles = makeStyles({
   toolbarSpaceSaver: {
     padding: "2em 0",
     width: "100vw",
-    borderTop: "1px solid",
+    // borderTop: "1px solid",
   },
 });
 
@@ -91,7 +93,7 @@ export default function Home() {
   const classes = useStyles();
 
   // Indicates whether the loop machine is playing or not
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMachinePlaying, setIsMachinePlaying] = useState(false);
   // An array of all the sounds (loops) that are currently playing
   const [currentlyPlayingSounds, setCurrentlyPlayingSounds] = useState([]);
   // An array of all the sounds (loops) that are activated, and waiting to be played in the next loop
@@ -130,16 +132,16 @@ export default function Home() {
 
   // Starts the loop
   const onStart = () => {
-    if (!isPlaying && waitingList[0]) {
+    if (!isMachinePlaying && waitingList[0]) {
       // Starts only if the app is not playing
       playWaitingList();
-      setIsPlaying(true);
+      setIsMachinePlaying(true);
     }
   };
 
   // Stops the loop
   const onStop = () => {
-    if (isPlaying) {
+    if (isMachinePlaying) {
       // Stops only if the app is playing
       // stops all sounds
       Howler.stop();
@@ -147,7 +149,7 @@ export default function Home() {
       setWaitingList([...waitingList, ...currentlyPlayingSounds]);
       // reset 'currently playing' list
       setCurrentlyPlayingSounds([]);
-      setIsPlaying(false);
+      setIsMachinePlaying(false);
     }
   };
 
@@ -214,9 +216,9 @@ export default function Home() {
     copyOfCurrentlyPlaying.splice(soundIndexInCurrentlyPlaying, 1);
     // set the modified copy as the new 'currently playing' list
     setCurrentlyPlayingSounds(copyOfCurrentlyPlaying);
-    // if there are no more sounds playing, set 'isPlaying' to 'false'
+    // if there are no more sounds playing, set 'isMachinePlaying' to 'false'
     if (copyOfCurrentlyPlaying.length === 0) {
-      setIsPlaying(false);
+      setIsMachinePlaying(false);
     }
   };
 
@@ -245,7 +247,8 @@ export default function Home() {
   return (
     <>
       <div className={classes.pageContainer}>
-        <div className={`${classes.cardsContainer} cards-container-margin`}>
+        <div className={`${classes.cardsContainer}`}>
+        {/* <div className={`${classes.cardsContainer} cards-container-margin`}> */}
           <div className={classes.padsRow}>
             <Pad
               name={"Bass"}
@@ -254,6 +257,7 @@ export default function Home() {
               padState={bassIsOn}
               setPadState={setBassIsOn}
               onSwitch={onSwitch}
+              isMachinePlaying={isMachinePlaying}
             />
             <Pad
               name={"Breakbeats"}
@@ -262,6 +266,7 @@ export default function Home() {
               padState={breakbeatsIsOn}
               setPadState={setBreakbeatsIsOn}
               onSwitch={onSwitch}
+              isMachinePlaying={isMachinePlaying}
             />
             <Pad
               name={"Drums"}
@@ -270,6 +275,7 @@ export default function Home() {
               padState={drumsIsOn}
               setPadState={setDrumsIsOn}
               onSwitch={onSwitch}
+              isMachinePlaying={isMachinePlaying}
             />
           </div>
           <div className={classes.padsRow}>
@@ -280,6 +286,7 @@ export default function Home() {
               padState={snareDrumIsOn}
               setPadState={setSnareDrumIsOn}
               onSwitch={onSwitch}
+              isMachinePlaying={isMachinePlaying}
             />
             <Pad
               name={"Electric Guitar"}
@@ -288,6 +295,7 @@ export default function Home() {
               padState={electricGuitarIsOn}
               setPadState={setElectricGuitarIsOn}
               onSwitch={onSwitch}
+              isMachinePlaying={isMachinePlaying}
             />
             <Pad
               name={"Funk"}
@@ -296,6 +304,7 @@ export default function Home() {
               padState={funkIsOn}
               setPadState={setFunkIsOn}
               onSwitch={onSwitch}
+              isMachinePlaying={isMachinePlaying}
             />
           </div>
           <div className={classes.padsRow}>
@@ -306,6 +315,7 @@ export default function Home() {
               padState={grooveIsOn}
               setPadState={setGrooveIsOn}
               onSwitch={onSwitch}
+              isMachinePlaying={isMachinePlaying}
             />
             <Pad
               name={"Maze Politics"}
@@ -314,6 +324,7 @@ export default function Home() {
               padState={mazePoliticsIsOn}
               setPadState={setMazePoliticsIsOn}
               onSwitch={onSwitch}
+              isMachinePlaying={isMachinePlaying}
             />
             <Pad
               name={"Synthesizer"}
@@ -322,6 +333,7 @@ export default function Home() {
               padState={synthesizerIsOn}
               setPadState={setSynthesizerIsOn}
               onSwitch={onSwitch}
+              isMachinePlaying={isMachinePlaying}
             />
           </div>
         </div>
@@ -330,7 +342,7 @@ export default function Home() {
       <ToolBar
         onStart={onStart}
         onStop={onStop}
-        isPlaying={isPlaying}
+        isMachinePlaying={isMachinePlaying}
         volumeSliderValue={volumeSliderValue}
         onVolumeChange={onVolumeChange}
       />

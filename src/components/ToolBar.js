@@ -38,13 +38,14 @@ const useStyles = makeStyles({
     margin: 'auto 0'
   },
 });
-export default function ToolBar({ isPlaying, onStart, onStop, volumeSliderValue, onVolumeChange }) {
-  const classes = useStyles();
+
+export default function ToolBar({ isMachinePlaying, onStart, onStop, volumeSliderValue, onVolumeChange }) {
+  const classes = useStyles();  
 
   return (
     <div className={classes.toolbar}>
-      <PlayCircleOutlineIcon  className={isPlaying ? classes.disabledIcon : classes.icon} onClick={onStart} fontSize={'large'} color={isPlaying ? 'disabled' : 'inherit'}/>
-      <StopRoundedIcon  className={isPlaying ? classes.icon : classes.disabledIcon} onClick={onStop} fontSize={'large'} color={isPlaying ? 'inherit' : 'disabled'}/>
+      <PlayCircleOutlineIcon  className={isMachinePlaying ? classes.disabledIcon : classes.icon} onClick={onStart} fontSize={'large'} color={isMachinePlaying ? 'disabled' : 'inherit'}/>
+      <StopRoundedIcon  className={isMachinePlaying ? classes.icon : classes.disabledIcon} onClick={onStop} fontSize={'large'} color={isMachinePlaying ? 'inherit' : 'disabled'}/>
         <VolumeDown className={classes.disabledIcon} fontSize={'large'}/>
         <Slider className={classes.slider} value={volumeSliderValue} onChange={(e, newValue) => {onVolumeChange(newValue)}} aria-labelledby="continuous-slider" />
         <VolumeUp className={classes.disabledIcon} fontSize={'large'}/>
