@@ -62,7 +62,7 @@ const useStyles = makeStyles({
 // Creating Howl instances for all loop files
 const bass = new Howl({
   src: [BassAudio],
-  _loop: true,
+  name: 'bass'
 });
 const breakbeats = new Howl({
   src: [BreakbeatsAudio],
@@ -88,6 +88,7 @@ const mazePolitics = new Howl({
 const synthesizer = new Howl({
   src: [SynthesizerAudio],
 });
+const soundNames = ['Bass', 'BreakBeats', 'Snare Drum', 'Drums', 'Electric Guitar', 'Funk', 'Groove', 'Maze Politics', 'Synthesizer'];
 
 export default function Home() {
   const classes = useStyles();
@@ -98,7 +99,7 @@ export default function Home() {
   const [currentlyPlayingSounds, setCurrentlyPlayingSounds] = useState([]);
   // An array of all the sounds (loops) that are activated, and waiting to be played in the next loop
   const [waitingList, setWaitingList] = useState([]);
-
+  console.log(bass);
   // These states only indicate whether the pad is activated (not necessarily playing yet) or not activated.
   // The states are used for the 'onSwitch' function.
   const [bassIsOn, setBassIsOn] = useState(false);

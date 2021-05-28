@@ -25,23 +25,12 @@ const useStyles = makeStyles({
     borderRadius: "50%",
     cursor: "pointer",
   },
-  sampleContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
   sampleButton: {
-    backgroundColor: '#adbdfc',
-    fontSize: '0.7em',
-    fontWeight: '600'
+    marginTop: 'auto',
+    marginBottom: '3px'
   },
-  sampleLogo: {
-    // position: "absolute",
-    bottom: "0.5em",
-  },
-  hovered: {},
-  loading: {
-    // position: 'absolute'
+  logo: {
+    position: 'absolute',
   },
 });
 
@@ -54,50 +43,51 @@ export default function Pad({
   isMachinePlaying,
 }) {
   const classes = useStyles();
-
+  
   const [isSampleButtonHovered, setIsSampleButtonHovered] = useState(false);
-  const [isStopButtonHovered, setIsStopButtonHovered] = useState(false);
   const [isPlayingSample, setIsPlayingSample] = useState(false);
 
-  const onSamplePlayed = () => {
+  const onSamplePlayed = (e) => {
+    e.stopPropagation();
     setIsPlayingSample(true);
     sound.play();
   };
-  const onSampleStopped = () => {
+  const onSampleStopped = (e) => {
+    e.stopPropagation();
     setIsPlayingSample(false);
     sound.stop();
   };
-  const renderLogo = () => {
-    // if(sound.playing()) {
+  const renderSampleButton = () => {
     if (isMachinePlaying) {
       return null;
     }
-    if (sound.playing()) {
-      // if(isPlayingSample) {
+    // if (sound.playing()) {
+      if(isPlayingSample) {
       return (
-        <StopIcon className={classes.sampleLogo} onClick={onSampleStopped} />
-      );
-    }
-    if (isSampleButtonHovered) {
-      return (
-        <PlayCircleFilledIcon
-          className={classes.sampleLogo}
-          classes={{ root: classes.sampleLogo }}
-          onMouseLeave={() => {
-            setIsSampleButtonHovered(false);
-          }}
-          onClick={onSamplePlayed}
+        <StopIcon 
+          classes={{root: classes.sampleButton}} 
+          onClick={(e) => {onSampleStopped(e)}} 
         />
       );
     }
-    return (
-      <PlayCircleOutlineIcon
-        className={classes.sampleLogo}
-        onMouseEnter={() => {
-          setIsSampleButtonHovered(true);
-        }}
-      />
-    );
+      return (
+        <PlayCircleFilledIcon
+          classes={{root: classes.sampleButton}}
+          onMouseLeave={(e) => {
+            e.stopPropagation();
+            setIsSampleButtonHovered(false);
+          }}
+          onClick={(e) => {onSamplePlayed(e)}}
+        />
+      );
+    // return (
+    //   <PlayCircleOutlineIcon
+    //     classes={{root: classes.sampleButton}}
+    //     onMouseEnter={() => {
+    //       setIsSampleButtonHovered(true);
+    //     }}
+    //   />
+    // );
   };
 
   return (
@@ -110,11 +100,9 @@ export default function Pad({
         }
         onClick={() => onSwitch(sound, padState, setPadState)}
       >
-        <img src={logo} className={classes.logo} />
+        <img src={logo} className={classes.logo}/>
+        {renderSampleButton()}
       </div>
-      {/* <div className={classes.sampleContainer}>
-        <Button variant="contained" size={'small'} endIcon={renderLogo()} classes={{root: classes.sampleButton}}>Play Sample</Button>
-      </div> */}
-    </div>
+    </div>  
   );
 }
