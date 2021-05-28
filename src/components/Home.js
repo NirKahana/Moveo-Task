@@ -38,11 +38,13 @@ const useStyles = makeStyles({
   cardsContainer: {
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-evenly",
-    // justifyContent: "space-between",
+    justifyContent: "center",
+    // justifyContent: "space-evenly",
     alignItems: "center",
-    flexWrap: "wrap",
+    overflow: 'scroll',
+    // flexWrap: "wrap",
     flexGrow: "1",
+    padding: '0.5em',
     // margin: "2em 0",
     "&::-webkit-scrollbar": {
       display: "none",
@@ -239,15 +241,15 @@ export default function Home() {
             ))}
           </div>
         </div>
-        <div className={classes.toolbarSpaceSaver}></div>
+        {/* <div className={classes.toolbarSpaceSaver}></div> */}
+        <ToolBar
+          onStart={onStart}
+          onStop={onStop}
+          isMachinePlaying={isMachinePlaying}
+          volumeSliderValue={volumeSliderValue}
+          onVolumeChange={onVolumeChange}
+        />
       </div>
-      <ToolBar
-        onStart={onStart}
-        onStop={onStop}
-        isMachinePlaying={isMachinePlaying}
-        volumeSliderValue={volumeSliderValue}
-        onVolumeChange={onVolumeChange}
-      />
     </>
   );
 }

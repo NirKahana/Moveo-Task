@@ -7,12 +7,20 @@ import ReactLoading from "react-loading";
 // material UI styles
 const useStyles = makeStyles({
   padContainer: {
-    height: '10em',
+    // height: '10em',
     display: 'flex',
-    alignItems: 'center'
+    flexDirection: 'column',
+    width: '100%', // test,
+    flexGrow: '1',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   pad: {
     position: "relative", //
+    width: '100%',
+    // maxWidth: '100%',
+    height: '100%',
+    maxHeight: '100%',
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -20,12 +28,17 @@ const useStyles = makeStyles({
     alignItems: "center",
     border: "1px solid black",
     boxShadow: "0 3px 5px 2px #aea9a9",
-    borderRadius: "50%",
+    borderRadius: "10px",
+    // borderRadius: "50%",
     cursor: "pointer",
   },
   sampleButton: {
     marginTop: 'auto',
     marginBottom: '3px'
+  },
+  loading: {
+    bottom: '10%',
+    marginTop: 'auto'
   },
   logo: {
     position: 'absolute',
@@ -57,7 +70,7 @@ export default function Pad({
     if(isMachinePlaying) { // If the machine is playing 
       // if the sound is activated but still waiting to be played, return a 'waiting' icon
       if(isSoundInWaitingList(sound)) {
-        return <ReactLoading type={'bubbles'} color={'black'} className={classes.sampleButton} height={'2em'} width={'2em'}/>
+        return <ReactLoading type={'bubbles'} color={'black'} className={`${classes.sampleButton} ${classes.loading}`} height={'2em'} width={'2em'}/>
       } else { // sound is not activated, no icon.
         return null
       }
@@ -91,6 +104,7 @@ export default function Pad({
       >
         <img src={sound.logo} className={classes.logo}/>
         {renderIcon()}
+        {/* <ReactLoading type={'bubbles'} color={'black'} className={`${classes.sampleButton} ${classes.loading}`} height={'2em'} width={'2em'}/> */}
       </div>
     </div>  
   );

@@ -17,39 +17,42 @@ body::-webkit-scrollbar {
   background-image: radial-gradient(#eaedf6, #adbdfc);
   /* color: #7e8aad */
 }
-.slider-width {
-  width: 5em !important;
-}
 .grid {
-  grid-template-columns: fit-content(8ch) fit-content(8ch) 1fr;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  grid-row-gap: 0.75em;
+  grid-column-gap: 0.75em;
 }
 @media only screen and (min-width: 500px) {
   .deactivatedColor:hover {
     background-image: radial-gradient(#eaedf6, #90a3ec);
   }
 }
-.pad-size {
+/* .pad-size {
   margin: 0 6vw;
   height: 8em;
   width: 8em;
-}
+} */
 
 @media only screen and (max-width: 650px) {
-  .pad-size {
+  /* .pad-size {
     margin: 0px 4vw;
     height: 7em;
     width: 7em;
-  }
+  } */
 }
 @media only screen and (max-width: 500px) {
-  .pad-size {
+  /* .pad-size {
     margin: 0px 4vw;
     height: 6em;
     width: 6em;
-  }
-  .cards-container-margin {
+  } */
+  /* .cards-container-margin {
     margin: 3em 0;
-  }
+  } */
 }
 @media only screen and (max-width: 400px) {
   .pad-size {
