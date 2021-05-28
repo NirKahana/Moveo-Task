@@ -18,7 +18,10 @@ body::-webkit-scrollbar {
   /* color: #7e8aad */
 }
 .slider-width {
-  width: 10% !important;
+  width: 5em !important;
+}
+.grid {
+  grid-template-columns: fit-content(8ch) fit-content(8ch) 1fr;
 }
 @media only screen and (min-width: 500px) {
   .deactivatedColor:hover {

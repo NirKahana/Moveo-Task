@@ -60,56 +60,20 @@ const useStyles = makeStyles({
 });
 
 // Creating Howl instances for all loop files
-const bass = new Howl({
-  src: [BassAudio],
-});
-const breakbeats = new Howl({
-  src: [BreakbeatsAudio],
-});
-const snareDrum = new Howl({
-  src: [SnareDrum],
-});
-const drums = new Howl({
-  src: [DrumsAudio],
-});
-const electricGuitar = new Howl({
-  src: [ElectricGuitarAudio],
-});
-const funk = new Howl({
-  src: [FunkAudio],
-});
-const groove = new Howl({
-  src: [GrooveAudio],
-});
-const mazePolitics = new Howl({
-  src: [MazePoliticsAudio],
-});
-const synthesizer = new Howl({
-  src: [SynthesizerAudio],
-});
-const soundNames = [
-  "Bass",
-  "BreakBeats",
-  "Snare Drum",
-  "Drums",
-  "Electric Guitar",
-  "Funk",
-  "Groove",
-  "Maze Politics",
-  "Synthesizer",
-];
-const soundLogos = [
-  bassLogo,
-  breakbeatsLogo,
-  snareDrumLogo,
-  drumsLogo,
-  electricGuitarLogo,
-  funkLogo,
-  grooveLogo,
-  mazePoliticsLogo,
-  synthesizerLogo,
-];
+const bass = new Howl({src: [BassAudio],});
+const breakbeats = new Howl({src: [BreakbeatsAudio],});
+const snareDrum = new Howl({src: [SnareDrum],});
+const drums = new Howl({src: [DrumsAudio],});
+const electricGuitar = new Howl({src: [ElectricGuitarAudio],});
+const funk = new Howl({src: [FunkAudio],});
+const groove = new Howl({src: [GrooveAudio],});
+const mazePolitics = new Howl({src: [MazePoliticsAudio],});
+const synthesizer = new Howl({src: [SynthesizerAudio],});
+
 const sounds = [bass, breakbeats, snareDrum, drums, electricGuitar, funk, groove, mazePolitics, synthesizer];
+const soundNames = ["Bass", "BreakBeats", "Snare Drum", "Drums", "Electric Guitar", "Funk", "Groove", "Maze Politics", "Synthesizer"];
+const soundLogos = [bassLogo, breakbeatsLogo, snareDrumLogo, drumsLogo, electricGuitarLogo, funkLogo, grooveLogo, mazePoliticsLogo, synthesizerLogo];
+// Adding usefull props
 sounds.forEach((sound, index) => {
     sound.name = soundNames[index];
     sound.logo = soundLogos[index];
@@ -140,7 +104,8 @@ export default function Home() {
     // clean-up
     return () => {
       if (currentlyPlayingSounds[0]) {
-        currentlyPlayingSounds[0].off("end"); // cleaning the event-listener
+        // cleaning the event-listener
+        currentlyPlayingSounds[0].off("end");
       }
     };
   }, [currentlyPlayingSounds, waitingList]);
@@ -261,16 +226,18 @@ export default function Home() {
   return (
     <>
       <div className={classes.pageContainer}>
-        <div className={`${classes.cardsContainer}`}>
-          {sounds.map((sound) => (
-            <Pad
-              sound={sound}
-              isSoundInWaitingList={isSoundInWaitingList} 
-              onSoundClicked={onSoundClicked} 
-              isSoundActivated={isSoundActivated}
-              isMachinePlaying={isMachinePlaying}
-            />
-          ))}
+        <div className={classes.cardsContainer}>
+          <div className={'grid'}>
+            {sounds.map((sound) => (
+              <Pad
+                sound={sound}
+                isSoundInWaitingList={isSoundInWaitingList} 
+                onSoundClicked={onSoundClicked} 
+                isSoundActivated={isSoundActivated}
+                isMachinePlaying={isMachinePlaying}
+              />
+            ))}
+          </div>
         </div>
         <div className={classes.toolbarSpaceSaver}></div>
       </div>
