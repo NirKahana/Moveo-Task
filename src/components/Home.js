@@ -35,7 +35,8 @@ const useStyles = makeStyles({
     alignContent: "center",
     height: "100vh",
     minWidth: '300px',
-    minHeight: '500px'
+    minHeight: '500px',
+    // backgroundColor: '#757680' //
   },
   cardsContainer: {
     display: "flex",
@@ -149,7 +150,6 @@ export default function Home() {
       removeFromCurrentlyPlaying(clickedSound);
     } else {
       // case 2) The sound is turned ON but still waiting to be played
-      console.log(isSoundInWaitingList(clickedSound));
       if (isSoundInWaitingList(clickedSound)) {
         // Remove the sound from the waiting list
         removeFromWaitingList(clickedSound);
@@ -225,8 +225,6 @@ export default function Home() {
     currentlyPlayingSounds.find((value) => value._sounds[0]._id === sound._sounds[0]._id)
   )
   
-  const isSoundActivated = (sound) => isSoundInWaitingList(sound) || isSoundCurrentlyPlaying(sound);
-  
   return (
     <>
       <div className={classes.pageContainer}>
@@ -235,9 +233,9 @@ export default function Home() {
             {sounds.map((sound) => (
               <Pad
                 sound={sound}
-                isSoundInWaitingList={isSoundInWaitingList} 
                 onSoundClicked={onSoundClicked} 
-                isSoundActivated={isSoundActivated}
+                isSoundWaiting={isSoundInWaitingList(sound)} 
+                isSoundPlaying={isSoundCurrentlyPlaying(sound)}
                 isMachinePlaying={isMachinePlaying}
               />
             ))}

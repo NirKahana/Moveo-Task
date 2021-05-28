@@ -48,8 +48,8 @@ const useStyles = makeStyles({
 export default function Pad({
   sound,
   onSoundClicked,
-  isSoundActivated,
-  isSoundInWaitingList,
+  isSoundPlaying,
+  isSoundWaiting,
   isMachinePlaying,
 }) {
   const classes = useStyles();
@@ -69,7 +69,7 @@ export default function Pad({
   const renderIcon = () => {
     if(isMachinePlaying) { // If the machine is playing 
       // if the sound is activated but still waiting to be played, return a 'waiting' icon
-      if(isSoundInWaitingList(sound)) {
+      if(isSoundWaiting) {
         return <ReactLoading type={'bubbles'} color={'black'} className={`${classes.sampleButton} ${classes.loading}`} height={'2em'} width={'2em'}/>
       } else { // sound is not activated, no icon.
         return null
@@ -96,7 +96,7 @@ export default function Pad({
     <div className={classes.padContainer}>
       <div
         className={
-          (isSoundActivated(sound))
+          (isSoundPlaying || isSoundWaiting)
             ? `${classes.pad} activatedColor pad-size`
             : `${classes.pad} deactivatedColor pad-size`
         }
