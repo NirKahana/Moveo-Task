@@ -34,6 +34,8 @@ const useStyles = makeStyles({
     flexDirection: "column",
     alignContent: "center",
     height: "100vh",
+    minWidth: '300px',
+    minHeight: '500px'
   },
   cardsContainer: {
     display: "flex",
