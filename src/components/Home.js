@@ -41,7 +41,7 @@ const useStyles = makeStyles({
     justifyContent: "space-between",
     flexWrap: "wrap",
     flexGrow: "1",
-    margin: "2em 0",
+    // margin: "2em 0",
     "&::-webkit-scrollbar": {
       display: "none",
     },
@@ -245,7 +245,7 @@ export default function Home() {
   return (
     <>
       <div className={classes.pageContainer}>
-        <div className={classes.cardsContainer}>
+        <div className={`${classes.cardsContainer} cards-container-margin`}>
           <div className={classes.padsRow}>
             <Pad
               name={"Bass"}

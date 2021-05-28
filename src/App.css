@@ -23,11 +23,34 @@ body::-webkit-scrollbar {
   height: 8em;
   width: 8em;
 }
+.cards-container-margin {
+  margin: 2em 0;
+}
 
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 650px) {
   .pad-size {
     margin: 0px 4vw;
     height: 7em;
     width: 7em;
+  }
+}
+@media only screen and (max-width: 500px) {
+  .pad-size {
+    margin: 0px 4vw;
+    height: 6em;
+    width: 6em;
+  }
+  .cards-container-margin {
+    margin: 3em 0;
+  }
+}
+@media only screen and (max-width: 400px) {
+  .pad-size {
+    margin: 0px 4vw;
+    height: 5em;
+    width: 5em;
+  }
+  .cards-container-margin {
+    margin: 5em 0;
   }
 }
