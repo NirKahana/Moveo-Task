@@ -17,6 +17,9 @@ body::-webkit-scrollbar {
   background-image: radial-gradient(#eaedf6, #adbdfc);
   /* color: #7e8aad */
 }
+.slider-width {
+  width: 10% !important;
+}
 @media only screen and (min-width: 500px) {
   .deactivatedColor:hover {
     background-image: radial-gradient(#eaedf6, #90a3ec);

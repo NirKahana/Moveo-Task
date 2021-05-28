@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
 import PlayCircleFilledIcon from "@material-ui/icons/PlayCircleFilled";
 import StopIcon from "@material-ui/icons/Stop";
-import Button from '@material-ui/core/Button';
 import ReactLoading from "react-loading";
 
 // material UI styles
@@ -35,16 +33,14 @@ const useStyles = makeStyles({
 });
 
 export default function Pad({
-  padState,
-  setPadState,
   sound,
-  onSwitch,
-  logo,
+  onSoundClicked,
+  isSoundActivated,
+  isSoundInWaitingList,
   isMachinePlaying,
 }) {
   const classes = useStyles();
-  
-  const [isSampleButtonHovered, setIsSampleButtonHovered] = useState(false);
+   
   const [isPlayingSample, setIsPlayingSample] = useState(false);
 
   const onSamplePlayed = (e) => {
@@ -57,51 +53,44 @@ export default function Pad({
     setIsPlayingSample(false);
     sound.stop();
   };
-  const renderSampleButton = () => {
-    if (isMachinePlaying) {
-      return null;
-    }
-    // if (sound.playing()) {
+  const renderIcon = () => {
+    if(isMachinePlaying) { // If the machine is playing 
+      // if the sound is activated but still waiting to be played, return a 'waiting' icon
+      if(isSoundInWaitingList(sound)) {
+        return <ReactLoading type={'bubbles'} color={'black'} className={classes.sampleButton} height={'2em'} width={'2em'}/>
+      } else { // sound is not activated, no icon.
+        return null
+      }
+    } else { // Machine isn't playing
       if(isPlayingSample) {
-      return (
-        <StopIcon 
+        return (
+          <StopIcon 
           classes={{root: classes.sampleButton}} 
           onClick={(e) => {onSampleStopped(e)}} 
         />
       );
     }
-      return (
+  }
+    return (
         <PlayCircleFilledIcon
           classes={{root: classes.sampleButton}}
-          onMouseLeave={(e) => {
-            e.stopPropagation();
-            setIsSampleButtonHovered(false);
-          }}
           onClick={(e) => {onSamplePlayed(e)}}
         />
       );
-    // return (
-    //   <PlayCircleOutlineIcon
-    //     classes={{root: classes.sampleButton}}
-    //     onMouseEnter={() => {
-    //       setIsSampleButtonHovered(true);
-    //     }}
-    //   />
-    // );
   };
 
   return (
     <div className={classes.padContainer}>
       <div
         className={
-          padState
+          (isSoundActivated(sound))
             ? `${classes.pad} activatedColor pad-size`
             : `${classes.pad} deactivatedColor pad-size`
         }
-        onClick={() => onSwitch(sound, padState, setPadState)}
+        onClick={() => onSoundClicked(sound)}
       >
-        <img src={logo} className={classes.logo}/>
-        {renderSampleButton()}
+        <img src={sound.logo} className={classes.logo}/>
+        {renderIcon()}
       </div>
     </div>  
   );

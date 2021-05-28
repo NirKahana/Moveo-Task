@@ -34,7 +34,7 @@ const useStyles = makeStyles({
     width: '90%'
   },
   slider: {
-    width: '30%',
+    // width: '10%',
     margin: 'auto 0'
   },
 });
@@ -46,9 +46,9 @@ export default function ToolBar({ isMachinePlaying, onStart, onStop, volumeSlide
     <div className={classes.toolbar}>
       <PlayCircleOutlineIcon  className={isMachinePlaying ? classes.disabledIcon : classes.icon} onClick={onStart} fontSize={'large'} color={isMachinePlaying ? 'disabled' : 'inherit'}/>
       <StopRoundedIcon  className={isMachinePlaying ? classes.icon : classes.disabledIcon} onClick={onStop} fontSize={'large'} color={isMachinePlaying ? 'inherit' : 'disabled'}/>
-        <VolumeDown className={classes.disabledIcon} fontSize={'large'}/>
-        <Slider className={classes.slider} value={volumeSliderValue} onChange={(e, newValue) => {onVolumeChange(newValue)}} aria-labelledby="continuous-slider" />
-        <VolumeUp className={classes.disabledIcon} fontSize={'large'}/>
+        <VolumeDown className={classes.disabledIcon} fontSize={'small'}/>
+        <Slider className={`${classes.slider} slider-width`} value={volumeSliderValue} onChange={(e, newValue) => {onVolumeChange(newValue)}} aria-labelledby="continuous-slider" />
+        <VolumeUp className={classes.disabledIcon} fontSize={'small'}/>
     </div>
   )
 }
