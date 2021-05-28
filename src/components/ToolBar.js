@@ -12,12 +12,12 @@ const useStyles = makeStyles({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 'auto',
+    // marginTop: 'auto',
     height: '4em',
     backgroundColor: '#a8b9f3',
     borderTop: '1px solid',
     boxShadow: '1px 0px 6px 1px #aea9a9',
-    position: 'fixed',
+    // position: 'fixed',
     bottom: '0',
     width: '100%',
     minWidth: '320px'
@@ -31,23 +31,28 @@ const useStyles = makeStyles({
   },
   volumeContainer: {
     display: 'flex',
-    width: '90%'
+    alignItems: 'center',
+    justifySelf: 'flex-end',
+    width: '12em'
   },
   slider: {
-    width: '30%',
+    // width: '10%',
     margin: 'auto 0'
   },
 });
-export default function ToolBar({ isPlaying, onStart, onStop, volumeSliderValue, onVolumeChange }) {
-  const classes = useStyles();
+
+export default function ToolBar({ isMachinePlaying, onStart, onStop, volumeSliderValue, onVolumeChange }) {
+  const classes = useStyles();  
 
   return (
     <div className={classes.toolbar}>
-      <PlayCircleOutlineIcon  className={isPlaying ? classes.disabledIcon : classes.icon} onClick={onStart} fontSize={'large'} color={isPlaying ? 'disabled' : 'inherit'}/>
-      <StopRoundedIcon  className={isPlaying ? classes.icon : classes.disabledIcon} onClick={onStop} fontSize={'large'} color={isPlaying ? 'inherit' : 'disabled'}/>
-        <VolumeDown className={classes.disabledIcon} fontSize={'large'}/>
-        <Slider className={classes.slider} value={volumeSliderValue} onChange={(e, newValue) => {onVolumeChange(newValue)}} aria-labelledby="continuous-slider" />
-        <VolumeUp className={classes.disabledIcon} fontSize={'large'}/>
+      <PlayCircleOutlineIcon  className={isMachinePlaying ? classes.disabledIcon : classes.icon} onClick={onStart} fontSize={'large'} color={isMachinePlaying ? 'disabled' : 'inherit'}/>
+      <StopRoundedIcon  className={isMachinePlaying ? classes.icon : classes.disabledIcon} onClick={onStop} fontSize={'large'} color={isMachinePlaying ? 'inherit' : 'disabled'}/>
+      <div className={classes.volumeContainer}>
+        <VolumeDown className={classes.disabledIcon} fontSize={'small'}/>
+        <Slider className={`${classes.slider}`} value={volumeSliderValue} onChange={(e, newValue) => {onVolumeChange(newValue)}} aria-labelledby="continuous-slider" />
+        <VolumeUp className={classes.disabledIcon} fontSize={'small'}/>
+      </div>
     </div>
   )
 }

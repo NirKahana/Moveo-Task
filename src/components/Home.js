@@ -12,16 +12,16 @@ import FunkAudio from "../loops/FunkAudio.mp3";
 import GrooveAudio from "../loops/GrooveAudio.mp3";
 import MazePoliticsAudio from "../loops/MazePoliticsAudio.mp3";
 import SynthesizerAudio from "../loops/SynthesizerAudio.mp3";
-import bassLogo from "../logos/bass-logo.png"
-import breakbeatsLogo from "../logos/breakbeats-logo.png"
-import snareDrumLogo from "../logos/snare-drums-logo.png"
-import drumsLogo from "../logos/drums-logo.png"
-import electricGuitarLogo from "../logos/electric-guitar-logo.png"
-import funkLogo from "../logos/funk-logo.png"
-import grooveLogo from "../logos/groove-logo.png"
-import mazePoliticsLogo from "../logos/maze-logo.png"
-import synthesizerLogo from "../logos/synth-logo.png"
-
+// importing all logos
+import bassLogo from "../logos/bass-logo.png";
+import breakbeatsLogo from "../logos/breakbeats-logo.png";
+import snareDrumLogo from "../logos/snare-drums-logo.png";
+import drumsLogo from "../logos/drums-logo.png";
+import electricGuitarLogo from "../logos/electric-guitar-logo.png";
+import funkLogo from "../logos/funk-logo.png";
+import grooveLogo from "../logos/groove-logo.png";
+import mazePoliticsLogo from "../logos/maze-logo.png";
+import synthesizerLogo from "../logos/synth-logo.png";
 
 // importing components
 import Pad from "./Pad";
@@ -34,95 +34,82 @@ const useStyles = makeStyles({
     flexDirection: "column",
     alignContent: "center",
     height: "100vh",
+    minWidth: '300px',
+    minHeight: '500px',
+    // backgroundColor: '#757680' //
   },
   cardsContainer: {
     display: "flex",
-    flexDirection: 'column',
-    justifyContent: "space-between",
-    flexWrap: "wrap",
+    flexDirection: "column",
+    justifyContent: "center",
+    // justifyContent: "space-evenly",
+    alignItems: "center",
+    overflow: 'scroll',
+    // flexWrap: "wrap",
     flexGrow: "1",
+    padding: '0.5em',
     // margin: "2em 0",
     "&::-webkit-scrollbar": {
       display: "none",
     },
   },
   padsRow: {
-    display: 'flex',
-    justifyContent: 'center'
+    display: "flex",
+    justifyContent: "center",
   },
   toolbarSpaceSaver: {
     padding: "2em 0",
     width: "100vw",
-    borderTop: "1px solid",
+    // borderTop: "1px solid",
   },
 });
 
 // Creating Howl instances for all loop files
-const bass = new Howl({
-  src: [BassAudio],
-  // _loop: true,
-});
-const breakbeats = new Howl({
-  src: [BreakbeatsAudio],
-});
-const snareDrum = new Howl({
-  src: [SnareDrum],
-});
-const drums = new Howl({
-  src: [DrumsAudio],
-});
-const electricGuitar = new Howl({
-  src: [ElectricGuitarAudio],
-});
-const funk = new Howl({
-  src: [FunkAudio],
-});
-const groove = new Howl({
-  src: [GrooveAudio],
-});
-const mazePolitics = new Howl({
-  src: [MazePoliticsAudio],
-});
-const synthesizer = new Howl({
-  src: [SynthesizerAudio],
+const bass = new Howl({src: [BassAudio],});
+const breakbeats = new Howl({src: [BreakbeatsAudio],});
+const snareDrum = new Howl({src: [SnareDrum],});
+const drums = new Howl({src: [DrumsAudio],});
+const electricGuitar = new Howl({src: [ElectricGuitarAudio],});
+const funk = new Howl({src: [FunkAudio],});
+const groove = new Howl({src: [GrooveAudio],});
+const mazePolitics = new Howl({src: [MazePoliticsAudio],});
+const synthesizer = new Howl({src: [SynthesizerAudio],});
+
+const sounds = [bass, breakbeats, snareDrum, drums, electricGuitar, funk, groove, mazePolitics, synthesizer];
+const soundNames = ["Bass", "BreakBeats", "Snare Drum", "Drums", "Electric Guitar", "Funk", "Groove", "Maze Politics", "Synthesizer"];
+const soundLogos = [bassLogo, breakbeatsLogo, snareDrumLogo, drumsLogo, electricGuitarLogo, funkLogo, grooveLogo, mazePoliticsLogo, synthesizerLogo];
+// Adding usefull props
+sounds.forEach((sound, index) => {
+    sound.name = soundNames[index];
+    sound.logo = soundLogos[index];
 });
 
 export default function Home() {
   const classes = useStyles();
 
   // Indicates whether the loop machine is playing or not
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMachinePlaying, setIsMachinePlaying] = useState(false);
   // An array of all the sounds (loops) that are currently playing
   const [currentlyPlayingSounds, setCurrentlyPlayingSounds] = useState([]);
   // An array of all the sounds (loops) that are activated, and waiting to be played in the next loop
   const [waitingList, setWaitingList] = useState([]);
-
-  // These states only indicate whether the pad is activated (not necessarily playing yet) or not activated.
-  // The states are used for the 'onSwitch' function.
-  const [bassIsOn, setBassIsOn] = useState(false);
-  const [breakbeatsIsOn, setBreakbeatsIsOn] = useState(false);
-  const [snareDrumIsOn, setSnareDrumIsOn] = useState(false);
-  const [drumsIsOn, setDrumsIsOn] = useState(false);
-  const [electricGuitarIsOn, setElectricGuitarIsOn] = useState(false);
-  const [funkIsOn, setFunkIsOn] = useState(false);
-  const [grooveIsOn, setGrooveIsOn] = useState(false);
-  const [mazePoliticsIsOn, setMazePoliticsIsOn] = useState(false);
-  const [synthesizerIsOn, setSynthesizerIsOn] = useState(false);
-
+  
   const [volumeSliderValue, setVolumeSliderValue] = useState(100);
 
   // useEffect: Every time one of the dependencies changes, an event-listener is created,
   // but only if the 'currently playing' list is not empty.
   // The event-listener listens to an 'end' event by the first sound in the 'currently playing' list.
-  // When the sound completes a loop, the 'playAgain' function is called,
-  // which plays again the sounds that were played before and also the sounds on the waiting list.
+  // When the sound completes a loop, the 'playAgain' function is called.
   useEffect(() => {
+    // if the 'currently playing' list is not empty-
     if (currentlyPlayingSounds[0]) {
-      currentlyPlayingSounds[0].on("end", playAgain);
+      // create an event-listener
+      currentlyPlayingSounds[0].on("end", playAgain); 
     }
     // clean-up
     return () => {
       if (currentlyPlayingSounds[0]) {
+        // cleaning the event-listener
         currentlyPlayingSounds[0].off("end");
       }
     };
@@ -130,16 +117,16 @@ export default function Home() {
 
   // Starts the loop
   const onStart = () => {
-    if (!isPlaying && waitingList[0]) {
+    if (!isMachinePlaying && waitingList[0]) {
       // Starts only if the app is not playing
       playWaitingList();
-      setIsPlaying(true);
+      setIsMachinePlaying(true);
     }
   };
 
   // Stops the loop
   const onStop = () => {
-    if (isPlaying) {
+    if (isMachinePlaying) {
       // Stops only if the app is playing
       // stops all sounds
       Howler.stop();
@@ -147,44 +134,32 @@ export default function Home() {
       setWaitingList([...waitingList, ...currentlyPlayingSounds]);
       // reset 'currently playing' list
       setCurrentlyPlayingSounds([]);
-      setIsPlaying(false);
+      setIsMachinePlaying(false);
     }
   };
 
-  // onSwitch
+  // onSoundClicked
   // description: Turns a sound ON/OFF.
-  // Params:
-  // switchedSound- the sound that has been clicked and needs to be switched
-  // padState- the previous state of the sound's pad (ON/OFF)
-  // setPadState- a setter function that changes 'padState'
-  const onSwitch = (switchedSound, padState, setPadState) => {
-    // Switch the pad's state (ON/OFF)
-    // setPadState({ ...padState, clicked: !padState.clicked });
-    setPadState(!padState);
-    // If the pad state was OFF and has been turned ON:
-    if (!padState) {
-      // *** 'padState' still refers to the pad's state before it was clicked!
-      // then add this sound to the waiting list
-      setWaitingList([...waitingList, switchedSound]);
+  // clickedSound- The sound that has been clicked and needs to be turned ON/OFF
+  const onSoundClicked = (clickedSound) => {
+    // case 1) The sound is playing
+    if (isSoundCurrentlyPlaying(clickedSound)) {
+      // Turn it off
+      clickedSound.stop();
+      // then remove the sound from the list of currently playing sounds
+      removeFromCurrentlyPlaying(clickedSound);
     } else {
-      // The pad state was ON and has been turned OFF:
-      // Check if this sound is currently playing
-      if (
-        currentlyPlayingSounds.find(
-          (sound) => sound._sounds[0]._id === switchedSound._sounds[0]._id
-        )
-      ) {
-        // if it is playing, stop the sound
-        switchedSound.stop();
-        // then remove the sound from the 'currently playing' list
-        removeFromCurrentlyPlaying(switchedSound);
-      } else {
-        // If this sound is not currently playing
-        // remove the sound from the waiting list
-        removeFromWaitingList(switchedSound);
+      // case 2) The sound is turned ON but still waiting to be played
+      if (isSoundInWaitingList(clickedSound)) {
+        // Remove the sound from the waiting list
+        removeFromWaitingList(clickedSound);
+      } else { // case 3) The sound is turned OFF
+        // Add it to the waiting list
+        setWaitingList([...waitingList, clickedSound]);
       }
     }
   };
+
   const onVolumeChange = (volume) => {
     setVolumeSliderValue(volume);
     Howler.volume(volume / 100);
@@ -214,9 +189,9 @@ export default function Home() {
     copyOfCurrentlyPlaying.splice(soundIndexInCurrentlyPlaying, 1);
     // set the modified copy as the new 'currently playing' list
     setCurrentlyPlayingSounds(copyOfCurrentlyPlaying);
-    // if there are no more sounds playing, set 'isPlaying' to 'false'
+    // if there are no more sounds playing, set 'isMachinePlaying' to 'false'
     if (copyOfCurrentlyPlaying.length === 0) {
-      setIsPlaying(false);
+      setIsMachinePlaying(false);
     }
   };
 
@@ -242,99 +217,39 @@ export default function Home() {
     setWaitingList([]);
   };
 
+  const isSoundInWaitingList = (sound) => {
+    return waitingList.find((value) => value._sounds[0]._id === sound._sounds[0]._id)
+  }
+  
+  const isSoundCurrentlyPlaying = (sound) => (
+    currentlyPlayingSounds.find((value) => value._sounds[0]._id === sound._sounds[0]._id)
+  )
+  
   return (
     <>
       <div className={classes.pageContainer}>
-        <div className={`${classes.cardsContainer} cards-container-margin`}>
-          <div className={classes.padsRow}>
-            <Pad
-              name={"Bass"}
-              sound={bass}
-              logo={bassLogo}
-              padState={bassIsOn}
-              setPadState={setBassIsOn}
-              onSwitch={onSwitch}
-            />
-            <Pad
-              name={"Breakbeats"}
-              sound={breakbeats}
-              logo={breakbeatsLogo}
-              padState={breakbeatsIsOn}
-              setPadState={setBreakbeatsIsOn}
-              onSwitch={onSwitch}
-            />
-            <Pad
-              name={"Drums"}
-              sound={drums}
-              logo={drumsLogo}
-              padState={drumsIsOn}
-              setPadState={setDrumsIsOn}
-              onSwitch={onSwitch}
-            />
-          </div>
-          <div className={classes.padsRow}>
-            <Pad
-              name={"Snare Drum"}
-              sound={snareDrum}
-              logo={snareDrumLogo}
-              padState={snareDrumIsOn}
-              setPadState={setSnareDrumIsOn}
-              onSwitch={onSwitch}
-            />
-            <Pad
-              name={"Electric Guitar"}
-              sound={electricGuitar}
-              logo={electricGuitarLogo}
-              padState={electricGuitarIsOn}
-              setPadState={setElectricGuitarIsOn}
-              onSwitch={onSwitch}
-            />
-            <Pad
-              name={"Funk"}
-              sound={funk}
-              logo={funkLogo}
-              padState={funkIsOn}
-              setPadState={setFunkIsOn}
-              onSwitch={onSwitch}
-            />
-          </div>
-          <div className={classes.padsRow}>
-            <Pad
-              name={"Groove"}
-              sound={groove}
-              logo={grooveLogo}
-              padState={grooveIsOn}
-              setPadState={setGrooveIsOn}
-              onSwitch={onSwitch}
-            />
-            <Pad
-              name={"Maze Politics"}
-              sound={mazePolitics}
-              logo={mazePoliticsLogo}
-              padState={mazePoliticsIsOn}
-              setPadState={setMazePoliticsIsOn}
-              onSwitch={onSwitch}
-            />
-            <Pad
-              name={"Synthesizer"}
-              sound={synthesizer}
-              logo={synthesizerLogo}
-              padState={synthesizerIsOn}
-              setPadState={setSynthesizerIsOn}
-              onSwitch={onSwitch}
-            />
+        <div className={classes.cardsContainer}>
+          <div className={'grid'}>
+            {sounds.map((sound) => (
+              <Pad
+                sound={sound}
+                onSoundClicked={onSoundClicked} 
+                isSoundWaiting={isSoundInWaitingList(sound)} 
+                isSoundPlaying={isSoundCurrentlyPlaying(sound)}
+                isMachinePlaying={isMachinePlaying}
+              />
+            ))}
           </div>
         </div>
-        <div className={classes.toolbarSpaceSaver}></div>
+        {/* <div className={classes.toolbarSpaceSaver}></div> */}
+        <ToolBar
+          onStart={onStart}
+          onStop={onStop}
+          isMachinePlaying={isMachinePlaying}
+          volumeSliderValue={volumeSliderValue}
+          onVolumeChange={onVolumeChange}
+        />
       </div>
-      <ToolBar
-        onStart={onStart}
-        onStop={onStop}
-        isPlaying={isPlaying}
-        volumeSliderValue={volumeSliderValue}
-        onVolumeChange={onVolumeChange}
-      />
-      {/* </div> */}
     </>
   );
 }
