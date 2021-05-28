@@ -1,9 +1,9 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import ReactLoading from 'react-loading';
-import Slider from '@material-ui/core/Slider';
-import VolumeDown from '@material-ui/icons/VolumeDown';
-import VolumeUp from '@material-ui/icons/VolumeUp';
+
+import bassLogo from "../logos/bass-logo.png"
+
 
 
 // material UI styles
@@ -24,16 +24,15 @@ const useStyles = makeStyles({
   }
 });
 
-export default function Pad({ padState, setPadState, sound, onSwitch, name }) {  
+export default function Pad({ padState, setPadState, sound, onSwitch, logo }) {  
   const classes = useStyles();
 
   return (
     <div
       className={padState ? `${classes.pad} activatedColor pad-size` : `${classes.pad} deactivatedColor pad-size`}
-      // className={padState ? `${classes.activatedPad} pad-size` : `${classes.pad} pad-size`}
       onClick={() => onSwitch(sound, padState, setPadState)}
     >
-      <div>{name}</div>
+      <div><img src={logo} /></div>
     </div>
   );
 }

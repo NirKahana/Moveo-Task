@@ -5,13 +5,23 @@ import { makeStyles } from "@material-ui/core/styles";
 // importing all audio files
 import BassAudio from "../loops/BassAudio.mp3";
 import BreakbeatsAudio from "../loops/BreakbeatsAudio.mp3";
-import DrumMachineAudio from "../loops/DrumMachineAudio.mp3";
+import SnareDrum from "../loops/SnareDrumAudio.mp3";
 import DrumsAudio from "../loops/DrumsAudio.mp3";
 import ElectricGuitarAudio from "../loops/ElectricGuitarAudio.mp3";
 import FunkAudio from "../loops/FunkAudio.mp3";
 import GrooveAudio from "../loops/GrooveAudio.mp3";
 import MazePoliticsAudio from "../loops/MazePoliticsAudio.mp3";
 import SynthesizerAudio from "../loops/SynthesizerAudio.mp3";
+import bassLogo from "../logos/bass-logo.png"
+import breakbeatsLogo from "../logos/breakbeats-logo.png"
+import snareDrumLogo from "../logos/snare-drums-logo.png"
+import drumsLogo from "../logos/drums-logo.png"
+import electricGuitarLogo from "../logos/electric-guitar-logo.png"
+import funkLogo from "../logos/funk-logo.png"
+import grooveLogo from "../logos/groove-logo.png"
+import mazePoliticsLogo from "../logos/maze-logo.png"
+import synthesizerLogo from "../logos/synth-logo.png"
+
 
 // importing components
 import Pad from "./Pad";
@@ -55,8 +65,8 @@ const bass = new Howl({
 const breakbeats = new Howl({
   src: [BreakbeatsAudio],
 });
-const drumMachine = new Howl({
-  src: [DrumMachineAudio],
+const snareDrum = new Howl({
+  src: [SnareDrum],
 });
 const drums = new Howl({
   src: [DrumsAudio],
@@ -91,7 +101,7 @@ export default function Home() {
   // The states are used for the 'onSwitch' function.
   const [bassIsOn, setBassIsOn] = useState(false);
   const [breakbeatsIsOn, setBreakbeatsIsOn] = useState(false);
-  const [drumMachineIsOn, setDrumMachineIsOn] = useState(false);
+  const [snareDrumIsOn, setSnareDrumIsOn] = useState(false);
   const [drumsIsOn, setDrumsIsOn] = useState(false);
   const [electricGuitarIsOn, setElectricGuitarIsOn] = useState(false);
   const [funkIsOn, setFunkIsOn] = useState(false);
@@ -240,6 +250,7 @@ export default function Home() {
             <Pad
               name={"Bass"}
               sound={bass}
+              logo={bassLogo}
               padState={bassIsOn}
               setPadState={setBassIsOn}
               onSwitch={onSwitch}
@@ -247,6 +258,7 @@ export default function Home() {
             <Pad
               name={"Breakbeats"}
               sound={breakbeats}
+              logo={breakbeatsLogo}
               padState={breakbeatsIsOn}
               setPadState={setBreakbeatsIsOn}
               onSwitch={onSwitch}
@@ -254,6 +266,7 @@ export default function Home() {
             <Pad
               name={"Drums"}
               sound={drums}
+              logo={drumsLogo}
               padState={drumsIsOn}
               setPadState={setDrumsIsOn}
               onSwitch={onSwitch}
@@ -261,15 +274,17 @@ export default function Home() {
           </div>
           <div className={classes.padsRow}>
             <Pad
-              name={"Drum Machine"}
-              sound={drumMachine}
-              padState={drumMachineIsOn}
-              setPadState={setDrumMachineIsOn}
+              name={"Snare Drum"}
+              sound={snareDrum}
+              logo={snareDrumLogo}
+              padState={snareDrumIsOn}
+              setPadState={setSnareDrumIsOn}
               onSwitch={onSwitch}
             />
             <Pad
               name={"Electric Guitar"}
               sound={electricGuitar}
+              logo={electricGuitarLogo}
               padState={electricGuitarIsOn}
               setPadState={setElectricGuitarIsOn}
               onSwitch={onSwitch}
@@ -277,6 +292,7 @@ export default function Home() {
             <Pad
               name={"Funk"}
               sound={funk}
+              logo={funkLogo}
               padState={funkIsOn}
               setPadState={setFunkIsOn}
               onSwitch={onSwitch}
@@ -286,6 +302,7 @@ export default function Home() {
             <Pad
               name={"Groove"}
               sound={groove}
+              logo={grooveLogo}
               padState={grooveIsOn}
               setPadState={setGrooveIsOn}
               onSwitch={onSwitch}
@@ -293,6 +310,7 @@ export default function Home() {
             <Pad
               name={"Maze Politics"}
               sound={mazePolitics}
+              logo={mazePoliticsLogo}
               padState={mazePoliticsIsOn}
               setPadState={setMazePoliticsIsOn}
               onSwitch={onSwitch}
@@ -300,6 +318,7 @@ export default function Home() {
             <Pad
               name={"Synthesizer"}
               sound={synthesizer}
+              logo={synthesizerLogo}
               padState={synthesizerIsOn}
               setPadState={setSynthesizerIsOn}
               onSwitch={onSwitch}
