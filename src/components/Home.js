@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Howl, Howler } from "howler";
+import Div100vh from 'react-div-100vh'
 import { makeStyles } from "@material-ui/core/styles";
 
 // importing all audio files
@@ -33,7 +34,7 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     alignContent: "center",
-    height: "100vh",
+    // height: "100vh",
     minWidth: '300px',
     minHeight: '500px',
     // backgroundColor: '#757680' //
@@ -228,29 +229,28 @@ export default function Home() {
   
   return (
     <>
-      <div className={classes.pageContainer}>
-        <div className={classes.cardsContainer}>
-          <div className={'grid'}>
-            {sounds.map((sound) => (
-              <Pad
-                sound={sound}
-                onSoundClicked={onSoundClicked} 
-                isSoundWaiting={isSoundInWaitingList(sound)} 
-                isSoundPlaying={isSoundCurrentlyPlaying(sound)}
-                isMachinePlaying={isMachinePlaying}
-              />
-            ))}
+        <Div100vh className={classes.pageContainer}>
+          <div className={classes.cardsContainer}>
+            <div className={'grid'}>
+              {sounds.map((sound) => (
+                <Pad
+                  sound={sound}
+                  onSoundClicked={onSoundClicked} 
+                  isSoundWaiting={isSoundInWaitingList(sound)} 
+                  isSoundPlaying={isSoundCurrentlyPlaying(sound)}
+                  isMachinePlaying={isMachinePlaying}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-        {/* <div className={classes.toolbarSpaceSaver}></div> */}
-        <ToolBar
-          onStart={onStart}
-          onStop={onStop}
-          isMachinePlaying={isMachinePlaying}
-          volumeSliderValue={volumeSliderValue}
-          onVolumeChange={onVolumeChange}
-        />
-      </div>
+          <ToolBar
+            onStart={onStart}
+            onStop={onStop}
+            isMachinePlaying={isMachinePlaying}
+            volumeSliderValue={volumeSliderValue}
+            onVolumeChange={onVolumeChange}
+          />
+        </Div100vh>
     </>
   );
 }
