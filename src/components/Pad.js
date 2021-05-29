@@ -8,19 +8,19 @@ import ReactLoading from "react-loading";
 const useStyles = makeStyles({
   padContainer: {
     // height: '10em',
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%', // test,
-    flexGrow: '1',
-    alignItems: 'center',
-    justifyContent: 'center'
+    display: "flex",
+    flexDirection: "column",
+    width: "100%", // test,
+    flexGrow: "1",
+    alignItems: "center",
+    justifyContent: "center",
   },
   pad: {
     position: "relative", //
-    width: '100%',
+    width: "100%",
     // maxWidth: '100%',
-    height: '100%',
-    maxHeight: '100%',
+    height: "100%",
+    maxHeight: "100%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -33,15 +33,15 @@ const useStyles = makeStyles({
     cursor: "pointer",
   },
   sampleButton: {
-    marginTop: 'auto',
-    marginBottom: '3px'
+    marginTop: "auto",
+    marginBottom: "3px",
   },
   loading: {
-    bottom: '10%',
-    marginTop: 'auto'
+    bottom: "10%",
+    marginTop: "auto",
   },
   logo: {
-    position: 'absolute',
+    position: "absolute",
   },
 });
 
@@ -53,7 +53,7 @@ export default function Pad({
   isMachinePlaying,
 }) {
   const classes = useStyles();
-   
+
   const [isPlayingSample, setIsPlayingSample] = useState(false);
 
   const onSamplePlayed = (e) => {
@@ -66,46 +66,60 @@ export default function Pad({
     setIsPlayingSample(false);
     sound.stop();
   };
+  // returns the appropriate icon according to the pad's mode 
   const renderIcon = () => {
-    if(isMachinePlaying) { // If the machine is playing 
+    if (isMachinePlaying) {
+      // If the machine is playing:
       // if the sound is activated but still waiting to be played, return a 'waiting' icon
-      if(isSoundWaiting) {
-        return <ReactLoading type={'bubbles'} color={'black'} className={`${classes.sampleButton} ${classes.loading}`} height={'2em'} width={'2em'}/>
-      } else { // sound is not activated, no icon.
-        return null
-      }
-    } else { // Machine isn't playing
-      if(isPlayingSample) {
+      if (isSoundWaiting) {
         return (
-          <StopIcon 
-          classes={{root: classes.sampleButton}} 
-          onClick={(e) => {onSampleStopped(e)}} 
-        />
-      );
+          <ReactLoading
+            type={"bubbles"}
+            color={"black"}
+            className={`${classes.sampleButton} ${classes.loading}`}
+            height={"2em"}
+            width={"2em"}
+          />
+        );
+      } else {
+        // no icon.
+        return null;
+      }
+    } else {
+      // Machine isn't playing
+      if (isPlayingSample) {
+        return (
+          <StopIcon
+            classes={{ root: classes.sampleButton }}
+            onClick={(e) => {
+              onSampleStopped(e);
+            }}
+          />
+        );
+      }
     }
-  }
     return (
-        <PlayCircleFilledIcon
-          classes={{root: classes.sampleButton}}
-          onClick={(e) => {onSamplePlayed(e)}}
-        />
-      );
+      <PlayCircleFilledIcon
+        classes={{ root: classes.sampleButton }}
+        onClick={(e) => {
+          onSamplePlayed(e);
+        }}
+      />
+    );
   };
 
   return (
     <div className={classes.padContainer}>
       <div
-        className={
-          (isSoundPlaying || isSoundWaiting)
+        className={isSoundPlaying || isSoundWaiting
             ? `${classes.pad} activatedColor pad-size`
             : `${classes.pad} deactivatedColor pad-size`
         }
         onClick={() => onSoundClicked(sound)}
       >
-        <img src={sound.logo} className={classes.logo}/>
+        <img src={sound.logo} className={classes.logo} />
         {renderIcon()}
-        {/* <ReactLoading type={'bubbles'} color={'black'} className={`${classes.sampleButton} ${classes.loading}`} height={'2em'} width={'2em'}/> */}
       </div>
-    </div>  
+    </div>
   );
 }
