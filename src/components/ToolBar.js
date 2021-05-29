@@ -13,7 +13,6 @@ const useStyles = makeStyles({
     position: 'fixed',
     justifyContent: 'center',
     alignItems: 'center',
-    // marginTop: 'auto',
     height: '4em',
     backgroundColor: '#a8b9f3',
     borderTop: '1px solid',
@@ -36,9 +35,8 @@ const useStyles = makeStyles({
     width: '12em'
   },
   slider: {
-    // width: '10%',
     margin: 'auto 0'
-  },
+  }
 });
 
 export default function ToolBar({ isMachinePlaying, onStart, onStop, volumeSliderValue, onVolumeChange }) {

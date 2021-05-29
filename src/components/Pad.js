@@ -7,18 +7,16 @@ import ReactLoading from "react-loading";
 // material UI styles
 const useStyles = makeStyles({
   padContainer: {
-    // height: '10em',
     display: "flex",
     flexDirection: "column",
-    width: "100%", // test,
+    width: "100%",
     flexGrow: "1",
     alignItems: "center",
     justifyContent: "center",
   },
   pad: {
-    position: "relative", //
+    position: "relative",
     width: "100%",
-    // maxWidth: '100%',
     height: "100%",
     maxHeight: "100%",
     display: "flex",
@@ -29,7 +27,6 @@ const useStyles = makeStyles({
     border: "1px solid black",
     boxShadow: "0 3px 5px 2px #aea9a9",
     borderRadius: "10px",
-    // borderRadius: "50%",
     cursor: "pointer",
   },
   sampleButton: {
