@@ -47,7 +47,8 @@ const useStyles = makeStyles({
     overflow: 'scroll',
     // flexWrap: "wrap",
     flexGrow: "1",
-    padding: '0.5em',
+    // padding: '.5em',
+    padding: '.5em .5em 4.5em .5em',
     // margin: "2em 0",
     "&::-webkit-scrollbar": {
       display: "none",

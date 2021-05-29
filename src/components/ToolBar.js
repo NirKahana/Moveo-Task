@@ -10,6 +10,7 @@ import VolumeUp from '@material-ui/icons/VolumeUp';
 const useStyles = makeStyles({
   toolbar: {
     display: 'flex',
+    position: 'fixed',
     justifyContent: 'center',
     alignItems: 'center',
     // marginTop: 'auto',
@@ -17,7 +18,6 @@ const useStyles = makeStyles({
     backgroundColor: '#a8b9f3',
     borderTop: '1px solid',
     boxShadow: '1px 0px 6px 1px #aea9a9',
-    // position: 'fixed',
     bottom: '0',
     width: '100%',
     minWidth: '320px'
