@@ -34,23 +34,17 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     alignContent: "center",
-    // height: "100vh",
     minWidth: '300px',
     minHeight: '500px',
-    // backgroundColor: '#757680' //
   },
   cardsContainer: {
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    // justifyContent: "space-evenly",
     alignItems: "center",
     overflow: 'scroll',
-    // flexWrap: "wrap",
     flexGrow: "1",
-    // padding: '.5em',
     padding: '.5em .5em 4.5em .5em',
-    // margin: "2em 0",
     "&::-webkit-scrollbar": {
       display: "none",
     },
@@ -62,7 +56,6 @@ const useStyles = makeStyles({
   toolbarSpaceSaver: {
     padding: "2em 0",
     width: "100vw",
-    // borderTop: "1px solid",
   },
 });
 
@@ -95,7 +88,7 @@ export default function Home() {
   const [currentlyPlayingSounds, setCurrentlyPlayingSounds] = useState([]);
   // An array of all the sounds (loops) that are activated, and waiting to be played in the next loop
   const [waitingList, setWaitingList] = useState([]);
-  
+  // The value of the volume slider 
   const [volumeSliderValue, setVolumeSliderValue] = useState(100);
 
   // useEffect: Every time one of the dependencies changes, an event-listener is created,
@@ -116,13 +109,24 @@ export default function Home() {
       }
     };
   }, [currentlyPlayingSounds, waitingList]);
-
+  
   // Starts the loop
   const onStart = () => {
+    // Starts only if the app is not already playing and only if there is at least one activated pad
     if (!isMachinePlaying && waitingList[0]) {
-      // Starts only if the app is not playing
       playWaitingList();
       setIsMachinePlaying(true);
+    }
+  };
+  
+  const playAgain = () => {
+    // play again all the currently playing sounds
+    currentlyPlayingSounds.forEach((sound) => {
+      sound.play();
+    });
+    // if there are sounds on the waiting list, play them too
+    if (waitingList[0]) {
+      playWaitingList();
     }
   };
 
@@ -139,23 +143,33 @@ export default function Home() {
       setIsMachinePlaying(false);
     }
   };
-
-  // onSoundClicked
-  // description: Turns a sound ON/OFF.
-  // clickedSound- The sound that has been clicked and needs to be turned ON/OFF
+  
+  // onSoundClicked: Checks what was the sound's mode when it was clicked (playing/waiting/off)
+  // and changes the sound mode accordingly
   const onSoundClicked = (clickedSound) => {
-    // case 1) The sound is playing
-    if (isSoundCurrentlyPlaying(clickedSound)) {
-      // Turn it off
+    // CASE 1) The sound was in 'playing' mode:
+    const soundIndexInPlayingList = findSoundIndexInList(clickedSound, currentlyPlayingSounds);
+    if (soundIndexInPlayingList !== -1) {
+      // Turns it off
       clickedSound.stop();
-      // then remove the sound from the list of currently playing sounds
-      removeFromCurrentlyPlaying(clickedSound);
+      // Removes the sound from the list of currently playing sounds:
+      const copyOfCurrentlyPlaying = currentlyPlayingSounds.slice();
+      copyOfCurrentlyPlaying.splice(soundIndexInPlayingList, 1);
+      setCurrentlyPlayingSounds(copyOfCurrentlyPlaying);
+      // if there are no more sounds playing, set 'isMachinePlaying' to 'false'
+      if (copyOfCurrentlyPlaying.length === 0) {
+        setIsMachinePlaying(false);
+      }
     } else {
-      // case 2) The sound is turned ON but still waiting to be played
-      if (isSoundInWaitingList(clickedSound)) {
-        // Remove the sound from the waiting list
-        removeFromWaitingList(clickedSound);
-      } else { // case 3) The sound is turned OFF
+      // CASE 2) The sound was in 'waiting' mode:
+      const soundIndexInWaitingList = findSoundIndexInList(clickedSound, waitingList);
+      if (soundIndexInWaitingList !== -1) {
+        // Removes the sound from the waiting list:
+        const copyOfWaitingList = waitingList.slice();
+        copyOfWaitingList.splice(soundIndexInWaitingList, 1);
+        setWaitingList(copyOfWaitingList);
+      } else { 
+        // CASE 3) The sound is turned OFF
         // Add it to the waiting list
         setWaitingList([...waitingList, clickedSound]);
       }
@@ -165,47 +179,6 @@ export default function Home() {
   const onVolumeChange = (volume) => {
     setVolumeSliderValue(volume);
     Howler.volume(volume / 100);
-  };
-
-  const removeFromWaitingList = (sound) => {
-    // find this sounds's index within the waiting list
-    const soundIndexInWaitingList = waitingList.findIndex(
-      (value) => value._sounds[0]._id === sound._sounds[0]._id
-    );
-    // create a copy of the waiting list
-    const copyOfWaitingList = waitingList.slice();
-    // remove the sound from the copy of the waiting list
-    copyOfWaitingList.splice(soundIndexInWaitingList, 1);
-    // set the modified copy as the new waiting list
-    setWaitingList(copyOfWaitingList);
-  };
-
-  const removeFromCurrentlyPlaying = (sound) => {
-    // find the sound's index within the 'currently playing' list
-    const soundIndexInCurrentlyPlaying = currentlyPlayingSounds.findIndex(
-      (value) => value._sounds[0]._id === sound._sounds[0]._id
-    );
-    // create a copy of the 'currently playing' list
-    const copyOfCurrentlyPlaying = currentlyPlayingSounds.slice();
-    // remove the sound from the copy
-    copyOfCurrentlyPlaying.splice(soundIndexInCurrentlyPlaying, 1);
-    // set the modified copy as the new 'currently playing' list
-    setCurrentlyPlayingSounds(copyOfCurrentlyPlaying);
-    // if there are no more sounds playing, set 'isMachinePlaying' to 'false'
-    if (copyOfCurrentlyPlaying.length === 0) {
-      setIsMachinePlaying(false);
-    }
-  };
-
-  const playAgain = () => {
-    // play again all the currently playing sounds
-    currentlyPlayingSounds.forEach((sound) => {
-      sound.play();
-    });
-    // if there are sounds on the waiting list, play them too
-    if (waitingList[0]) {
-      playWaitingList();
-    }
   };
 
   const playWaitingList = () => {
@@ -219,25 +192,22 @@ export default function Home() {
     setWaitingList([]);
   };
 
-  const isSoundInWaitingList = (sound) => {
-    return waitingList.find((value) => value._sounds[0]._id === sound._sounds[0]._id)
-  }
-  
-  const isSoundCurrentlyPlaying = (sound) => (
-    currentlyPlayingSounds.find((value) => value._sounds[0]._id === sound._sounds[0]._id)
-  )
-  
+  const findSoundIndexInList = (sound, list) => (
+    list.findIndex((value) => value._sounds[0]._id === sound._sounds[0]._id)
+  );
+
   return (
     <>
         <Div100vh className={classes.pageContainer}>
           <div className={classes.cardsContainer}>
             <div className={'grid'}>
-              {sounds.map((sound) => (
+              {sounds.map((sound, index) => (
                 <Pad
+                  key={index}
                   sound={sound}
                   onSoundClicked={onSoundClicked} 
-                  isSoundWaiting={isSoundInWaitingList(sound)} 
-                  isSoundPlaying={isSoundCurrentlyPlaying(sound)}
+                  isSoundWaiting={findSoundIndexInList(sound, waitingList) !== -1} 
+                  isSoundPlaying={findSoundIndexInList(sound, currentlyPlayingSounds) !== -1}
                   isMachinePlaying={isMachinePlaying}
                 />
               ))}
