@@ -36,19 +36,15 @@ const useStyles = makeStyles({
     height: "100vh",
     minWidth: '300px',
     minHeight: '500px',
-    // backgroundColor: '#757680' //
   },
   cardsContainer: {
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    // justifyContent: "space-evenly",
     alignItems: "center",
     overflow: 'scroll',
-    // flexWrap: "wrap",
     flexGrow: "1",
     padding: '0.5em',
-    // margin: "2em 0",
     "&::-webkit-scrollbar": {
       display: "none",
     },
@@ -65,15 +61,15 @@ const useStyles = makeStyles({
 });
 
 // Creating Howl instances for all loop files
-const bass = new Howl({src: [BassAudio],});
-const breakbeats = new Howl({src: [BreakbeatsAudio],});
-const snareDrum = new Howl({src: [SnareDrum],});
-const drums = new Howl({src: [DrumsAudio],});
-const electricGuitar = new Howl({src: [ElectricGuitarAudio],});
-const funk = new Howl({src: [FunkAudio],});
-const groove = new Howl({src: [GrooveAudio],});
-const mazePolitics = new Howl({src: [MazePoliticsAudio],});
-const synthesizer = new Howl({src: [SynthesizerAudio],});
+const bass = new Howl({src: [BassAudio]});
+const breakbeats = new Howl({src: [BreakbeatsAudio]});
+const snareDrum = new Howl({src: [SnareDrum]});
+const drums = new Howl({src: [DrumsAudio]});
+const electricGuitar = new Howl({src: [ElectricGuitarAudio]});
+const funk = new Howl({src: [FunkAudio]});
+const groove = new Howl({src: [GrooveAudio]});
+const mazePolitics = new Howl({src: [MazePoliticsAudio]});
+const synthesizer = new Howl({src: [SynthesizerAudio]});
 
 const sounds = [bass, breakbeats, snareDrum, drums, electricGuitar, funk, groove, mazePolitics, synthesizer];
 const soundNames = ["Bass", "BreakBeats", "Snare Drum", "Drums", "Electric Guitar", "Funk", "Groove", "Maze Politics", "Synthesizer"];
@@ -95,6 +91,17 @@ export default function Home() {
   const [waitingList, setWaitingList] = useState([]);
   
   const [volumeSliderValue, setVolumeSliderValue] = useState(100);
+
+  const [record, setRecord] = useState({
+    initialWaitingList: [bass],
+    initialVolumeValue: 80,
+    commands: [
+      {name: 'switch', value: snareDrum, timeStamp: 2000},
+      {name: 'start', timeStamp: 3200},
+      {name: 'switch', value: snareDrum, timeStamp: 4200},
+      {name: 'stop', timeStamp: 5200}
+    ]
+  })
 
   // useEffect: Every time one of the dependencies changes, an event-listener is created,
   // but only if the 'currently playing' list is not empty.
@@ -217,14 +224,100 @@ export default function Home() {
     setWaitingList([]);
   };
 
-  const isSoundInWaitingList = (sound) => {
-    return waitingList.find((value) => value._sounds[0]._id === sound._sounds[0]._id)
-  }
+  const isSoundInWaitingList = (sound) => (
+    waitingList.find((value) => value._sounds[0]._id === sound._sounds[0]._id)
+  )
   
   const isSoundCurrentlyPlaying = (sound) => (
     currentlyPlayingSounds.find((value) => value._sounds[0]._id === sound._sounds[0]._id)
   )
   
+  const playRecord = (record) => {
+    if(!isMachinePlaying) {
+      console.log('started playing record!');
+      // set initial values
+      const currentTimeStamp = 0;
+      const currentWaitingList = record.initialWaitingList;
+      const currentPlayingList = [];
+      const currentVolumeValue = record.initialVolumeValue;
+      setWaitingList(currentWaitingList);
+      // start running commands
+      runCommands(record.commands, currentTimeStamp, currentWaitingList, currentPlayingList, currentVolumeValue);
+    }
+  }
+  const runCommands = (commandsArray, currentTimeStamp, currentWaitingList, currentPlayingList, currentVolumeValue) => {
+    let index = 0;
+    while(commandsArray[index]) {
+      setTimeout(() => {
+        executeCommand(commandsArray[index], currentWaitingList, currentPlayingList, currentVolumeValue);
+        index = index + 1;
+      }, commandsArray[index].timeStamp - currentTimeStamp);
+    }
+  }
+  const executeCommand = (command, currentWaitingList, currentPlayingList, currentVolumeValue) => {
+    switch (true) {
+      case command.name === 'start':
+        // execution
+        currentWaitingList.forEach(sound => {
+          sound.play();
+        });
+        // setting forward
+        currentPlayingList = [...currentWaitingList];
+        setCurrentlyPlayingSounds(currentPlayingList);
+        currentWaitingList = [];
+        setWaitingList(currentWaitingList);
+        setIsMachinePlaying(true);
+        break;
+      case command.name === 'stop':
+        // execution
+        Howler.stop();
+        // setting forward
+        currentWaitingList = [...currentWaitingList, ...currentPlayingList];
+        setWaitingList(currentWaitingList);
+        currentPlayingList = [];
+        setCurrentlyPlayingSounds([]);
+        setIsMachinePlaying(false);
+        break;
+      case command.name === 'volume':
+        currentVolumeValue = command.value;
+        setVolumeSliderValue(currentVolumeValue);
+        break;
+      case command.name === 'switch':
+        const clickedSound = command.value;
+        // check what I need to do with it:
+        // first, try to check if it is playing:
+        const soundIndexInPlayingList = currentPlayingList.findIndex(
+          value => value._sounds[0]._id === clickedSound._sounds[0]._id
+        );
+        // if sound was found in playing list
+        if(soundIndexInPlayingList !== -1) {
+          // stop it
+          clickedSound.stop();
+          // then, remove it from the playing list
+          currentPlayingList.splice(soundIndexInPlayingList, 1);
+          setCurrentlyPlayingSounds(currentPlayingList);
+          // if the sound was the last one playing, change the state of the machine to OFF
+          if(currentPlayingList.length === 0) {
+            setIsMachinePlaying(false);
+          }
+        } else { // if the sound is not in 'playing' mode, try to check if it is in 'waiting' mode 
+          const soundIndexInWaitingList = currentWaitingList.findIndex(
+          value => value._sounds[0]._id === clickedSound._sounds[0]._id
+          );
+          // if sound was found in the waiting list
+          if(soundIndexInWaitingList !== -1) {
+            currentWaitingList.splice(soundIndexInWaitingList, 1);
+            setWaitingList(currentWaitingList);
+          } else {
+            // at last, if sound is not playing and not waiting to be played, it must be OFF.
+            // Therefore, turn it on!
+            currentWaitingList = [...currentWaitingList, clickedSound];
+            setWaitingList(currentWaitingList);
+          }
+        }
+    }
+  }
+
   return (
     <>
       <div className={classes.pageContainer}>
@@ -248,6 +341,8 @@ export default function Home() {
           isMachinePlaying={isMachinePlaying}
           volumeSliderValue={volumeSliderValue}
           onVolumeChange={onVolumeChange}
+          playRecord={playRecord}
+          record={record}
         />
       </div>
     </>

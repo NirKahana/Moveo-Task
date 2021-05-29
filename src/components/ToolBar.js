@@ -5,6 +5,7 @@ import StopRoundedIcon from '@material-ui/icons/StopRounded';
 import Slider from '@material-ui/core/Slider';
 import VolumeDown from '@material-ui/icons/VolumeDown';
 import VolumeUp from '@material-ui/icons/VolumeUp';
+import { PlayCircleFilled } from '@material-ui/icons';
 
 // material UI styles
 const useStyles = makeStyles({
@@ -41,11 +42,12 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ToolBar({ isMachinePlaying, onStart, onStop, volumeSliderValue, onVolumeChange }) {
+export default function ToolBar({ isMachinePlaying, onStart, onStop, volumeSliderValue, onVolumeChange, playRecord, record }) {
   const classes = useStyles();  
 
   return (
     <div className={classes.toolbar}>
+      <PlayCircleFilled  className={classes.icon} onClick={() => {playRecord(record)}} fontSize={'large'} color={'inherit'}/>
       <PlayCircleOutlineIcon  className={isMachinePlaying ? classes.disabledIcon : classes.icon} onClick={onStart} fontSize={'large'} color={isMachinePlaying ? 'disabled' : 'inherit'}/>
       <StopRoundedIcon  className={isMachinePlaying ? classes.icon : classes.disabledIcon} onClick={onStop} fontSize={'large'} color={isMachinePlaying ? 'inherit' : 'disabled'}/>
       <div className={classes.volumeContainer}>
